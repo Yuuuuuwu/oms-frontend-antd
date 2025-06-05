@@ -1,0 +1,73 @@
+/* 通知欄主題色及細節最佳化 */
+.custom-notification-dropdown.dark.ant-card,
+.custom-notification-dropdown.dark .ant-card {
+  background: #23262f !important;
+  color: #f2f3f5 !important;
+  box-shadow: 0 6px 32px rgba(0, 0, 0, 0.3);
+  border-radius: 16px !important;
+  border: none !important;
+}
+
+.custom-notification-dropdown.dark .ant-card-head,
+.custom-notification-dropdown.dark .ant-card-head-title {
+  background: #23262f !important;
+  color: #f2f3f5 !important;
+  border-bottom: 1px solid #31343f !important;
+}
+
+.custom-notification-dropdown.dark .ant-tabs-nav,
+.custom-notification-dropdown.dark .ant-tabs-tab {
+  background: transparent !important;
+}
+
+.custom-notification-dropdown.dark .ant-tabs-tab-btn,
+.custom-notification-dropdown.dark .ant-tabs-tab {
+  color: #f2f3f5 !important;
+}
+.custom-notification-dropdown.dark .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #13c2c2 !important;
+}
+
+.custom-notification-dropdown.dark .ant-list-item {
+  background: #23262f !important;
+  color: #f2f3f5 !important;
+  border-bottom: 1px solid #31343f !important;
+}
+.custom-notification-dropdown.dark .ant-list-item.unread {
+  background: #273140 !important;
+}
+.custom-notification-dropdown.dark .ant-list-item:hover {
+  background: #262b35 !important;
+}
+
+/* 修正未讀標籤，避免一坨，圓點和標籤有明顯分隔 */
+.custom-notification-dropdown .unread-label {
+  display: inline-block;
+  background: #13c2c2;
+  color: #23262f;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 0 7px;
+  margin-left: 8px;
+  vertical-align: middle;
+  line-height: 20px;
+  height: 20px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.custom-notification-dropdown.dark .ant-badge-dot {
+  background: #13c2c2 !important;
+}
+
+/* 連結顏色 */
+.custom-notification-dropdown.dark .ant-btn-link,
+.custom-notification-dropdown.dark a {
+  color: #13c2c2 !important;
+}
+.custom-notification-dropdown.dark .ant-btn-link:hover,
+.custom-notification-dropdown.dark a:hover {
+  color: #36cfc9 !important;
+  text-decoration: underline;
+}

@@ -1,0 +1,17 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 資料庫三層圓柱 -->
+  <ellipse cx="12" cy="5" rx="6" ry="2" stroke="#333333" stroke-width="2" fill="none"/>
+  <path d="M6 5 V11 C6 12.1046 10.2680 13 12 13 C13.7320 13 18 12.1046 18 11 V5" stroke="#333333" stroke-width="2" fill="none"/>
+  <ellipse cx="12" cy="11" rx="6" ry="2" stroke="#333333" stroke-width="2" fill="none"/>
+  <path d="M6 11 V17 C6 18.1046 10.2680 19 12 19 C13.7320 19 18 18.1046 18 17 V11" stroke="#333333" stroke-width="2" fill="none"/>
+  <ellipse cx="12" cy="17" rx="6" ry="2" stroke="#333333" stroke-width="2" fill="none"/>
+  <!-- 兩側弧線箭頭（同步／更新符號） -->
+  <path d="M18 9 C20 7, 20 3, 16 3" stroke="#333333" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M6 15 C4 17, 4 21, 8 21" stroke="#333333" stroke-width="1.5" fill="none" marker-end="url(#arrowhead)"/>
+  <!-- 箭頭定義（marker） -->
+  <defs>
+    <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#333333"/>
+    </marker>
+  </defs>
+</svg>
