@@ -10,7 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import OrderList from "./pages/Order";
 import OrderDetail from "./pages/Order/Detail";
 import OrderEdit from "./pages/Order/Edit";
-import ProductPage from "./pages/Product";
+import ProductPage from "./pages/Product"; // # 確認匯入 ProductPage
 import CustomerPage from "./pages/Customer";
 import Profile from "./pages/Profile";
 import "./App.css";
@@ -45,6 +45,7 @@ const AppInner: React.FC = () => {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
           <Route
             path="/"
             element={
@@ -58,10 +59,12 @@ const AppInner: React.FC = () => {
             <Route path="orders/:id" element={<OrderDetail />} />
             <Route path="orders/:id/edit" element={<OrderEdit />} />
             <Route path="orders/new" element={<OrderEdit isNew={true} />} />
-            <Route path="products" element={<ProductPage />} />
+            <Route path="products" element={<ProductPage />} />{" "}
+            {/* # 新增：商品管理路由 */}
             <Route path="customers" element={<CustomerPage />} />
             <Route path="profile" element={<Profile />} />
           </Route>
+
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </BrowserRouter>

@@ -1,5 +1,8 @@
+// src/api/orders.ts
+
 import axios from "axios";
 import { getToken } from "../utils/auth"; // # 修改：匯入 getToken 以取得 JWT
+import type { Order } from "../types/orders"; // # 修改：匯入 Order 型別
 
 // ===== 新增 axios 攔截器，將 JWT 自動加到 Authorization 標頭 =====
 axios.interceptors.request.use((config) => {

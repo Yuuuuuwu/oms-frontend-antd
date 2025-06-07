@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react"; // # 修改：加入 useState, useEffect
+import React, { useState, useEffect } from "react"; // # 修改：保留 useState, useEffect
 import { useParams, useNavigate } from "react-router-dom";
-import { type Order } from "../../types/orders"; // # 修改：移除靜態 orders, 僅匯入型別
 import { Form, Input, InputNumber, Button, Card, message, Spin } from "antd"; // # 修改：加入 message, Spin
-import { createOrder, getOrderDetail, updateOrder } from "../../api/orders"; // # 修改：匯入後端 API
+import {
+  createOrder,
+  getOrderDetail,
+  updateOrder,
+  type Order, // # 修改：從 api/orders 匯入 Order 型別
+} from "../../api/orders"; // # 修改：改用正確的 API 路徑
 
 interface EditProps {
   isNew?: boolean;
@@ -11,17 +15,14 @@ interface EditProps {
 const OrderEdit: React.FC<EditProps> = ({ isNew }) => {
   const { id } = useParams<{ id: string }>(); // # 修改：型別化 useParams
   const navigate = useNavigate();
-  const [form] = Form.useForm<Order>(); // # 修改：型別化 Form
+  const [form] = Form.useForm<Order>(); // # 修改：使用從 api 匯入的 Order 型別
   const [loading, setLoading] = useState<boolean>(false); // # 修改：新增 loading 狀態
 
   useEffect(() => {
-    // # 修改：使用 useEffect 呼叫 API
     if (!isNew && id) {
       setLoading(true);
       getOrderDetail(id)
-        .then((o) => {
-          form.setFieldsValue(o);
-        })
+        .then((o) => form.setFieldsValue(o))
         .catch(() => message.error("取得訂單資料失敗"))
         .finally(() => setLoading(false));
     }
@@ -39,15 +40,14 @@ const OrderEdit: React.FC<EditProps> = ({ isNew }) => {
       }
       navigate("/orders");
     } catch {
-      message.error(isNew ? "新增訂單失敗" : "更新訂單失敗"); // # 修改：錯誤訊息顯示
+      message.error(isNew ? "新增訂單失敗" : "更新訂單失敗"); // # 修改：顯示錯誤訊息
     } finally {
       setLoading(false);
     }
   };
 
   if (loading) {
-    // # 修改：載入中顯示 Spin
-    return <Spin />;
+    return <Spin style={{ width: "100%", marginTop: 100 }} />; // # 修改：載入中顯示 Spin
   }
 
   return (

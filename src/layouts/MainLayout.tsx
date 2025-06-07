@@ -109,22 +109,21 @@ const MainLayout: React.FC = () => {
   const handleViewAll = () => navigate("/notifications");
 
   // 側邊選單資料
-  const menuData =
-    user?.role === "admin"
+  const menuData = [
+    { path: "/dashboard", name: "首頁", icon: <DashboardOutlined /> },
+    { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
+    { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> }, // # 修改：將商品管理移出 admin 專屬，所有使用者可見
+    // admin 專屬的客戶管理
+    ...(user?.role === "admin"
       ? [
-          { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
-          { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
-          { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> },
           {
             path: "/customers",
             name: "客戶管理",
             icon: <UsergroupAddOutlined />,
           },
         ]
-      : [
-          { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
-          { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
-        ];
+      : []),
+  ];
 
   // 語言切換 popover
   const langPopover = (
@@ -205,7 +204,6 @@ const MainLayout: React.FC = () => {
       navTheme={navTheme}
       route={{ routes: menuData }}
       menuItemRender={(item, dom) => <a href={item.path}>{dom}</a>}
-      // 頭像點擊可進個人中心或登出
       avatarProps={{
         src:
           "https://api.dicebear.com/7.x/miniavs/svg?seed=" +
