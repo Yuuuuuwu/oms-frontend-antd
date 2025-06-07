@@ -1,13 +1,15 @@
 import React from "react";
 import { Form, Input, Button, Card, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import { fakeLogin } from "../../utils/auth";
+// # 修改：將 fakeLogin 換成 login
+import { login } from "../../utils/auth";
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-    const success = await fakeLogin(values.username, values.password);
+    // # 修改：呼叫 login 而非 fakeLogin
+    const success = await login(values.username, values.password);
     if (success) {
       message.success("登入成功！");
       navigate("/dashboard");
