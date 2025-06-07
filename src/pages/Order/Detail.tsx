@@ -1,14 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // # 修改：加入 useState, useEffect
 import { useParams, useNavigate } from "react-router-dom";
-import { type Order, orders } from "../../types/orders";
-import { Card, Descriptions, Button, Table } from "antd";
+import { type Order } from "../../types/orders"; // # 修改：移除靜態 orders, 僅匯入型別
+import { Card, Descriptions, Button, Table, message, Spin } from "antd"; // # 修改：加入 message, Spin
+import { getOrderDetail } from "../../api/orders"; // # 修改：匯入後端 API
 
 const OrderDetail: React.FC = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>(); // # 修改：型別化 useParams
   const navigate = useNavigate();
-  const order = orders.find((o) => o.orderId === id);
+  const [order, setOrder] = useState<Order | null>(null); // # 修改：新增 state 存放訂單
+  const [loading, setLoading] = useState<boolean>(false); // # 修改：新增 loading 狀態
 
-  if (!order) return <div>找不到資料</div>;
+  useEffect(() => {
+    // # 修改：元件掛載後呼叫後端
+    if (!id) return;
+    setLoading(true);
+    getOrderDetail(id)
+      .then(setOrder)
+      .catch(() => message.error("取得訂單詳情失敗"))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    // # 修改：載入中顯示 Spin
+    return <Spin />;
+  }
+  if (!order) {
+    // # 修改：找不到資料時處理
+    return <div>找不到資料</div>;
+  }
 
   return (
     <Card

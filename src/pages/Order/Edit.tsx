@@ -1,43 +1,58 @@
-import React from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { type Order, orders } from "../../types/orders";
-import { Form, Input, InputNumber, Button, Card } from "antd";
+import React, { useState, useEffect } from "react"; // # 修改：加入 useState, useEffect
+import { useParams, useNavigate } from "react-router-dom";
+import { type Order } from "../../types/orders"; // # 修改：移除靜態 orders, 僅匯入型別
+import { Form, Input, InputNumber, Button, Card, message, Spin } from "antd"; // # 修改：加入 message, Spin
+import { createOrder, getOrderDetail, updateOrder } from "../../api/orders"; // # 修改：匯入後端 API
 
 interface EditProps {
   isNew?: boolean;
 }
 
 const OrderEdit: React.FC<EditProps> = ({ isNew }) => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>(); // # 修改：型別化 useParams
   const navigate = useNavigate();
-  const order = !isNew ? orders.find((o) => o.orderId === id) : undefined;
+  const [form] = Form.useForm<Order>(); // # 修改：型別化 Form
+  const [loading, setLoading] = useState<boolean>(false); // # 修改：新增 loading 狀態
 
-  const [form] = Form.useForm();
-
-  React.useEffect(() => {
-    if (order) {
-      form.setFieldsValue(order);
+  useEffect(() => {
+    // # 修改：使用 useEffect 呼叫 API
+    if (!isNew && id) {
+      setLoading(true);
+      getOrderDetail(id)
+        .then((o) => {
+          form.setFieldsValue(o);
+        })
+        .catch(() => message.error("取得訂單資料失敗"))
+        .finally(() => setLoading(false));
     }
-  }, [order, form]);
+  }, [isNew, id, form]);
 
-  const onFinish = (values: Order) => {
-    // 這裡可以連結後端 API
-    if (isNew) {
-      alert("已新增訂單（實際專案請呼叫API）");
-    } else {
-      alert("已更新訂單（實際專案請呼叫API）");
+  const onFinish = async (values: Order) => {
+    setLoading(true);
+    try {
+      if (isNew) {
+        await createOrder(values); // # 修改：呼叫 createOrder
+        message.success("新增訂單成功");
+      } else if (id) {
+        await updateOrder(id, values); // # 修改：呼叫 updateOrder
+        message.success("更新訂單成功");
+      }
+      navigate("/orders");
+    } catch {
+      message.error(isNew ? "新增訂單失敗" : "更新訂單失敗"); // # 修改：錯誤訊息顯示
+    } finally {
+      setLoading(false);
     }
-    navigate("/orders");
   };
 
+  if (loading) {
+    // # 修改：載入中顯示 Spin
+    return <Spin />;
+  }
+
   return (
-    <Card title={isNew ? "新增訂單" : `編輯訂單 - ${order?.orderId}`}>
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-        initialValues={order}
-      >
+    <Card title={isNew ? "新增訂單" : `編輯訂單 - ${id}`}>
+      <Form<Order> form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item label="訂單編號" name="orderId" rules={[{ required: true }]}>
           <Input disabled={!isNew} />
         </Form.Item>

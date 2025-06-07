@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react"; // # 修改：加入 useState, useEffect
 import { ProTable } from "@ant-design/pro-components";
 import { useNavigate } from "react-router-dom";
-import { type Order, orders } from "../../types/orders";
-import { Button } from "antd";
+import { type Order } from "../../types/orders"; // # 修改：僅匯入 Order 型別，移除靜態 orders
+import { Button, message } from "antd"; // # 修改：加入 message
+import { getOrders } from "../../api/orders"; // # 修改：匯入後端 API
 
 const columns = [
   { title: "訂單編號", dataIndex: "orderId", key: "orderId" },
@@ -36,11 +37,24 @@ const columns = [
 
 const OrderList: React.FC = () => {
   const navigate = useNavigate();
+  const [data, setData] = useState<Order[]>([]); // # 修改：新增 state 存放列表
+  const [loading, setLoading] = useState<boolean>(false); // # 修改：載入狀態
+
+  useEffect(() => {
+    // # 修改：元件掛載後呼叫 API
+    setLoading(true);
+    getOrders()
+      .then(setData)
+      .catch(() => message.error("取得訂單列表失敗"))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
-    <ProTable
+    <ProTable<Order>
       columns={columns}
-      dataSource={orders}
+      dataSource={data} // # 修改：由 API 回傳的 data
       rowKey="orderId"
+      loading={loading} // # 修改：顯示載入中
       search={false}
       toolBarRender={() => [
         <Button
