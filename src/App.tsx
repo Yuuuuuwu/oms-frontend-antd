@@ -14,6 +14,7 @@ import ProductPage from "./pages/Product"; // # 確認匯入 ProductPage
 import CustomerPage from "./pages/Customer";
 import Profile from "./pages/Profile";
 import "./App.css";
+import UserList from "./pages/User/UserList.tsx";
 
 // 登入驗證元件
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -55,6 +56,7 @@ const AppInner: React.FC = () => {
             }
           >
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="/users" element={<UserList />} />
             <Route path="orders" element={<OrderList />} />
             <Route path="orders/:id" element={<OrderDetail />} />
             <Route path="orders/:id/edit" element={<OrderEdit />} />

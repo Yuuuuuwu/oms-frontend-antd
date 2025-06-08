@@ -10,6 +10,7 @@ import {
   BellOutlined,
   BulbOutlined,
   GlobalOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -111,6 +112,15 @@ const MainLayout: React.FC = () => {
   // 側邊選單資料
   const menuData = [
     { path: "/dashboard", name: "首頁", icon: <DashboardOutlined /> },
+    ...(user?.role === "admin"
+      ? [
+          {
+            path: "/users",
+            name: "使用者管理",
+            icon: <UserOutlined />,
+          },
+        ]
+      : []),
     { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
     { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> }, // # 修改：將商品管理移出 admin 專屬，所有使用者可見
     // admin 專屬的客戶管理
