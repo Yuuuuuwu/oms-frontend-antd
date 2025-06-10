@@ -14,6 +14,12 @@ import ProductPage from "./pages/Product";
 import CustomerPage from "./pages/Customer";
 import Profile from "./pages/Profile";
 import "./App.css";
+<<<<<<< HEAD
+=======
+import UserList from "./pages/User/UserList.tsx";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
+>>>>>>> 20d2f55 (新增忘記密碼與重設密碼功能，更新登入與註冊頁面以支援 email 登入)
 
 // 登入驗證元件
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -45,6 +51,12 @@ const AppInner: React.FC = () => {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+<<<<<<< HEAD
+=======
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+
+>>>>>>> 20d2f55 (新增忘記密碼與重設密碼功能，更新登入與註冊頁面以支援 email 登入)
           <Route
             path="/"
             element={
