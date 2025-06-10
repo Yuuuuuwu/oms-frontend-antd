@@ -15,6 +15,8 @@ import CustomerPage from "./pages/Customer";
 import Profile from "./pages/Profile";
 import "./App.css";
 import UserList from "./pages/User/UserList.tsx";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
+import ResetPassword from "./pages/Auth/ResetPassword";
 
 // 登入驗證元件
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -46,6 +48,8 @@ const AppInner: React.FC = () => {
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
           <Route
             path="/"

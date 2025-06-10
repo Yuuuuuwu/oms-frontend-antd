@@ -37,25 +37,49 @@ const Register: React.FC = () => {
       <Card title="OMS 註冊" style={{ width: 350 }}>
         <Form onFinish={onFinish}>
           <Form.Item
-            name="username"
-            rules={[{ required: true, message: "請輸入帳號" }]}
-          >
-            <Input placeholder="帳號" />
-          </Form.Item>
-          <Form.Item
-            name="email" // # 修改：新增 email 欄位
+            name="email"
             rules={[
-              { required: true, message: "請輸入 Email" },
-              { type: "email", message: "請輸入有效的 Email" },
+              { required: true, type: "email", message: "請輸入有效 Email" },
             ]}
           >
             <Input placeholder="Email" />
           </Form.Item>
           <Form.Item
             name="password"
-            rules={[{ required: true, message: "請輸入密碼" }]}
+            rules={[
+              { required: true, message: "請輸入密碼" },
+              { min: 8, message: "密碼長度至少 8 碼" },
+              {
+                pattern:
+                  /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=]{8,}$/,
+                message: "密碼需包含英數字",
+              },
+            ]}
           >
             <Input.Password placeholder="密碼" />
+          </Form.Item>
+          <Form.Item
+            name="confirm_password"
+            dependencies={["password"]}
+            rules={[
+              { required: true, message: "請再次輸入密碼" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error("兩次密碼輸入不一致"));
+                },
+              }),
+            ]}
+          >
+            <Input.Password placeholder="確認密碼" />
+          </Form.Item>
+          <Form.Item
+            name="username"
+            rules={[{ required: true, message: "請輸入暱稱" }]}
+          >
+            <Input placeholder="暱稱" />
           </Form.Item>
           <Form.Item
             name="role" // # 保留 role 欄位，但改為 Select
