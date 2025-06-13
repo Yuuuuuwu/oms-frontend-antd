@@ -10,6 +10,7 @@ import {
   BellOutlined,
   BulbOutlined,
   GlobalOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -108,23 +109,54 @@ const MainLayout: React.FC = () => {
   // 查看全部通知
   const handleViewAll = () => navigate("/notifications");
 
-  // 側邊選單資料
-  const menuData =
-    user?.role === "admin"
-      ? [
-          { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
-          { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
-          { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> },
-          {
-            path: "/customers",
-            name: "客戶管理",
-            icon: <UsergroupAddOutlined />,
-          },
-        ]
-      : [
-          { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
-          { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
-        ];
+  // 依角色動態產生側邊選單
+  let menuData = [];
+  if (user?.role === "admin") {
+    menuData = [
+      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
+      { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
+      { path: "/fakedashboard", name: "假儀表板", icon: <DashboardOutlined /> },
+      { path: "/cart", name: "購物車", icon: <AppstoreOutlined /> },
+      { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
+      { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> },
+      {
+        path: "/customers",
+        name: "客戶管理",
+        icon: <UsergroupAddOutlined />,
+      },
+      {
+        path: "/users",
+        name: "使用者管理",
+        icon: <UserOutlined />,
+      },
+    ];
+  } else if (user?.role === "seller") {
+    menuData = [
+      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
+      { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
+      { path: "/cart", name: "購物車", icon: <AppstoreOutlined /> },
+      { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
+      { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> },
+      {
+        path: "/customers",
+        name: "客戶管理",
+        icon: <UsergroupAddOutlined />,
+      },
+    ];
+  } else if (user?.role === "customer") {
+    menuData = [
+      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
+      { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
+      { path: "/cart", name: "購物車", icon: <AppstoreOutlined /> },
+      { path: "/orders", name: "我的訂單", icon: <OrderedListOutlined /> },
+    ];
+  } else {
+    // guest
+    menuData = [
+      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
+      { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
+    ];
+  }
 
   // 語言切換 popover
   const langPopover = (

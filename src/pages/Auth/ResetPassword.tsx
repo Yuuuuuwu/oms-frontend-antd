@@ -1,11 +1,24 @@
-import React, { useState } from "react";
-import { Form, Input, Button, Card, message } from "antd";
+import React, { useState, useEffect } from "react";
+import { Form, Input, Button, Card, message, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { resetPassword } from "../../utils/auth";
+const { Paragraph } = Typography;
 
 const ResetPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // 嘗試自動貼上 clipboard 內容到 token 欄位
+    if (navigator.clipboard) {
+      navigator.clipboard.readText().then((clip) => {
+        if (clip && clip.length > 100) {
+          form.setFieldsValue({ token: clip });
+        }
+      });
+    }
+  }, [form]);
 
   const onFinish = async (values: any) => {
     setLoading(true);
@@ -35,7 +48,10 @@ const ResetPassword: React.FC = () => {
       }}
     >
       <Card title="重設密碼" style={{ width: 500 }}>
-        <Form onFinish={onFinish} layout="vertical">
+        <Paragraph type="secondary" style={{ marginBottom: 16 }}>
+          請貼上「忘記密碼」頁取得的 Token，並設定新密碼。
+        </Paragraph>
+        <Form form={form} onFinish={onFinish} layout="vertical">
           <Form.Item
             name="token"
             label="重設密碼 Token"
@@ -43,7 +59,6 @@ const ResetPassword: React.FC = () => {
           >
             <Input.TextArea
               placeholder="請貼上重設密碼 Token"
-              defaultValue=" "
               autoSize={{ minRows: 3, maxRows: 5 }}
             />
           </Form.Item>
