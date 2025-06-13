@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Card, message } from "antd";
-import ResetPassword from "./ResetPassword"; // 引入 ResetPassword 組件
+import { Form, Input, Button, Card, message, Typography } from "antd";
+const { Paragraph } = Typography;
 
 const ForgotPassword: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -41,22 +41,28 @@ const ForgotPassword: React.FC = () => {
         background: "#f0f2f5",
       }}
     >
-      <Card title="忘記密碼" style={{ width: 350 }}>
+      <Card title="忘記密碼" style={{ width: 400 }}>
         {sent ? (
           <>
-            <p>請至信箱收信，依指示重設密碼。</p>
+            <Paragraph type="success">
+              請複製下方 Token，並前往「重設密碼」頁貼上 Token 及設定新密碼。
+            </Paragraph>
             {resetToken && (
               <div style={{ wordBreak: "break-all", marginTop: 16 }}>
-                <b>（測試用）重設密碼 token：</b>
-                <div style={{ fontSize: 12, color: "#888" }}>{resetToken}</div>
+                <b>（測試用）重設密碼 Token：</b>
+                <Paragraph copyable style={{ fontSize: 12, color: "#888" }}>
+                  {resetToken}
+                </Paragraph>
               </div>
             )}
-            <br />
-            <Form.Item>
-              <Button type="primary" href="/reset-password" block>
-                重設密碼
-              </Button>
-            </Form.Item>
+            <Button
+              type="primary"
+              href="/reset-password"
+              block
+              style={{ marginTop: 16 }}
+            >
+              前往重設密碼
+            </Button>
           </>
         ) : (
           <Form onFinish={onFinish} layout="vertical">

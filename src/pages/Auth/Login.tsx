@@ -1,22 +1,14 @@
 import React from "react";
 import { Form, Input, Button, Card, message } from "antd";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-import { fakeLogin } from "../../utils/auth";
-=======
 import { login } from "../../utils/auth";
->>>>>>> 20d2f55 (新增忘記密碼與重設密碼功能，更新登入與註冊頁面以支援 email 登入)
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values: any) => {
-<<<<<<< HEAD
-    const success = await fakeLogin(values.username, values.password);
-=======
     // # 以 email 登入，login 需支援 email
     const success = await login(values.email, values.password);
->>>>>>> 20d2f55 (新增忘記密碼與重設密碼功能，更新登入與註冊頁面以支援 email 登入)
     if (success) {
       message.success("登入成功！");
       navigate("/dashboard");
