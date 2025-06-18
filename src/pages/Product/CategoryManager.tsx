@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Button, Form, Input, Modal, Tree, message } from "antd";
-import {
-  getCategories,
-  createCategory,
-  updateCategory,
-  deleteCategory,
-  Category,
-} from "../../api/products";
+import * as ProductAPI from "../../api/products";
+import type { Category } from "../../api/products";
+
+const { getCategories, createCategory, updateCategory, deleteCategory } = ProductAPI;
 
 const CategoryManager: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);

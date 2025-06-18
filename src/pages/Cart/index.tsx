@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, InputNumber, message, Card, Form, Input, Modal } from "antd";
 import { createOrder } from "../../api/orders";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser } from "../../utils/auth";
 import { getProducts } from "../../api/products";
 
 interface CartItem {
@@ -22,7 +21,6 @@ const CartPage: React.FC = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  // 1. 一次性讀 localStorage + 產品資料，初始化 cart state
   useEffect(() => {
     const fetch = async () => {
       const productsRes = await getProducts();
@@ -34,7 +32,6 @@ const CartPage: React.FC = () => {
         cartArr = JSON.parse(cartRaw);
       } catch {}
 
-      // 對照 product 資料，把 id+qty 組成 CartItem
       const cartFull: CartItem[] = cartArr
         .map(item => {
           const prod = productsRes.data.find((p: any) => p.id === item.id);
@@ -55,33 +52,29 @@ const CartPage: React.FC = () => {
     fetch();
   }, []);
 
-  // 2. 改數量時，同步寫入 localStorage
   const updateQty = (id: number, qty: number) => {
-    setCart(prev => {
-      const newCart = prev.map(item =>
+    setCart((prev: CartItem[]) => {
+      const newCart = prev.map((item: CartItem) =>
         item.id === id
           ? { ...item, qty: Math.max(1, Math.min(qty, item.stock)) }
           : item
       );
-      // 只存 {id, qty} 至 localStorage
-      const storageData = newCart.map(({ id, qty }) => ({ id, qty }));
+      const storageData = newCart.map(({ id, qty }: CartItem) => ({ id, qty }));
       localStorage.setItem("oms-cart", JSON.stringify(storageData));
       return newCart;
     });
   };
 
-  // 3. 移除商品時，同步寫入 localStorage
   const removeItem = (id: number) => {
-    setCart(prev => {
-      const newCart = prev.filter(item => item.id !== id);
-      const storageData = newCart.map(({ id, qty }) => ({ id, qty }));
+    setCart((prev: CartItem[]) => {
+      const newCart = prev.filter((item: CartItem) => item.id !== id);
+      const storageData = newCart.map(({ id, qty }: CartItem) => ({ id, qty }));
       localStorage.setItem("oms-cart", JSON.stringify(storageData));
       return newCart;
     });
   };
 
-  // 其餘不動…
-  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const total = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.qty, 0);
 
   const columns = [
     {
@@ -89,7 +82,7 @@ const CartPage: React.FC = () => {
       dataIndex: "name",
       render: (_: any, record: CartItem) => (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {record.image_url && <img src={record.image_url} style={{ width: 40 }} />}
+          {record.image_url && <img src={record.image_url} style={{ width: 40 }} alt={record.name} />}
           <span>{record.name}</span>
         </div>
       ),
@@ -103,15 +96,18 @@ const CartPage: React.FC = () => {
           min={1}
           max={record.stock}
           value={qty}
-          onChange={v => updateQty(record.id, Number(v))}
+          onChange={(v: number) => updateQty(record.id, v)}
         />
       ),
     },
-    { title: "小計", render: (_: any, r: CartItem) => r.price * r.qty },
+    {
+      title: "小計",
+      render: (_: any, record: CartItem) => record.price * record.qty,
+    },
     {
       title: "操作",
       render: (_: any, record: CartItem) => (
-        <Button danger type="link" onClick={() => removeItem(record.id)}>
+        <Button type="link" onClick={() => removeItem(record.id)}>
           移除
         </Button>
       ),
@@ -152,31 +148,24 @@ const CartPage: React.FC = () => {
   };
 
   return (
-    <Card title="購物車" style={{ maxWidth: 800, margin: "32px auto" }}>
+    <Card title="購物車">
       <Table
-        columns={columns}
         dataSource={cart}
+        columns={columns}
         rowKey="id"
         pagination={false}
-        footer={() => (
-          <div style={{ textAlign: "right", fontWeight: 600 }}>
-            總計：<span style={{ color: "#d4380d", fontSize: 18 }}>￥{total}</span>
-            <Button
-              type="primary"
-              style={{ marginLeft: 16 }}
-              disabled={!cart.length}
-              onClick={handleCheckout}
-            >
-              前往結帳
-            </Button>
-          </div>
-        )}
       />
-      {cart.length === 0 && (
-        <div style={{ textAlign: "center", color: "#aaa", margin: 32 }}>
-          購物車是空的
-        </div>
-      )}
+      <div style={{ marginTop: 16, textAlign: "right" }}>
+        <b>總金額：￥{total}</b>
+        <Button
+          type="primary"
+          onClick={() => setCheckoutOpen(true)}
+          disabled={cart.length === 0}
+          style={{ marginLeft: 16 }}
+        >
+          前往結帳
+        </Button>
+      </div>
       <Modal
         open={checkoutOpen}
         onCancel={() => setCheckoutOpen(false)}
