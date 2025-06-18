@@ -143,3 +143,5 @@ export async function deleteCategory(id: number): Promise<void> {
   });
   if (!res.ok) throw new Error("刪除分類失敗");
 }
+
+export type { Category };

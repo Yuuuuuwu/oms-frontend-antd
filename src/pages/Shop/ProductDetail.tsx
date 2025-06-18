@@ -1,3 +1,4 @@
+// src/pages/Shop/ProductDetail.tsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, Button, Spin, message } from "antd";
@@ -25,10 +26,18 @@ const ProductDetail: React.FC = () => {
     <Card
       title={product.name}
       extra={<Button onClick={() => navigate(-1)}>返回</Button>}
-      style={{ maxWidth: 600, margin: "32px auto" }}
-      cover={product.image_url ? <img src={product.image_url} alt={product.name} style={{ height: 300, objectFit: "cover" }} /> : null}
+      style={{ maxWidth: 600, margin: "32px auto", width: "100%" }}
+      cover={
+        product.image_url && (
+          <img
+            src={product.image_url}
+            alt={product.name}
+            style={{ height: 300, objectFit: "cover" }}
+          />
+        )
+      }
     >
-      <div>價格：￥{product.price}</div>
+      <div>價格：${product.price}</div>
       <div>庫存：{product.stock}</div>
       <div>描述：{product.desc}</div>
       <div>分類：{product.category?.name || "-"}</div>
@@ -36,7 +45,9 @@ const ProductDetail: React.FC = () => {
         type="primary"
         style={{ marginTop: 24 }}
         disabled={product.stock === 0}
-        onClick={() => message.success("已加入購物車（請於商品列表頁操作實際加入）")}
+        onClick={() =>
+          message.success("已加入購物車（請於商品列表頁操作實際加入）")
+        }
       >
         {product.stock === 0 ? "缺貨" : "加入購物車"}
       </Button>
