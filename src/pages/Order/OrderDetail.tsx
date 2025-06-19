@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button, message, Card, Descriptions, Table } from "antd";
 import { getToken } from "../../utils/auth";
 import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import { BACKEND_URL } from '../../utils/env';
 
 const OrderDetail: React.FC = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ const OrderDetail: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchWithAuth(`http://localhost:5000/orders/${id}`, {
+    fetchWithAuth(`${BACKEND_URL}/orders/${id}`, {
       headers: { "Content-Type": "application/json" },
     })
       .then((res) => (res.ok ? res.json() : Promise.reject("取得訂單失敗")))
@@ -21,27 +22,24 @@ const OrderDetail: React.FC = () => {
       .finally(() => setLoading(false));
   }, [id]);
 
+  // 新增：自動刷新訂單歷程
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchWithAuth(`http://localhost:5000/orders/${id}`, {
+      fetchWithAuth(`${BACKEND_URL}/orders/${id}`, {
         headers: { "Content-Type": "application/json" },
       })
-        .then((res) => res.json())
+        .then((res) => (res.ok ? res.json() : null))
         .then((data) => {
-          if (data.status === "paid") {
-            setOrder(data);
-            clearInterval(interval);
-          }
+          if (data) setOrder(data);
         });
     }, 5000);
-
     return () => clearInterval(interval);
   }, [id]);
 
   const handlePay = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/payments/ecpay/${id}`, {
+      const res = await fetch(`${BACKEND_URL}/payments/ecpay/${id}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${getToken()}` },
       });

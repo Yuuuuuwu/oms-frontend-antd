@@ -3,6 +3,7 @@ import { Table, Button, InputNumber, message, Card, Form, Input, Modal } from "a
 import { createOrder } from "../../api/orders";
 import { useNavigate } from "react-router-dom";
 import { getProducts } from "../../api/products";
+import { getCurrentUser } from "../../utils/auth";
 
 interface CartItem {
   id: number;
@@ -52,7 +53,8 @@ const CartPage: React.FC = () => {
     fetch();
   }, []);
 
-  const updateQty = (id: number, qty: number) => {
+  const updateQty = (id: number, qty: number | null) => {
+    if (qty === null) return;
     setCart((prev: CartItem[]) => {
       const newCart = prev.map((item: CartItem) =>
         item.id === id
@@ -96,7 +98,7 @@ const CartPage: React.FC = () => {
           min={1}
           max={record.stock}
           value={qty}
-          onChange={(v: number) => updateQty(record.id, v)}
+          onChange={(v) => updateQty(record.id, v)}
         />
       ),
     },
@@ -139,6 +141,8 @@ const CartPage: React.FC = () => {
       localStorage.removeItem("oms-cart");
       setCheckoutOpen(false);
       form.resetFields();
+      // 新增：下單後自動刷新商品庫存
+      window.location.reload();
       navigate(`/orders/${order.id}`);
     } catch (e: any) {
       message.error(e.message || "下單失敗");
