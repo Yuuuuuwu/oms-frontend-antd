@@ -28,7 +28,8 @@ const ShopPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await getProducts();
-      setProducts(res.data.filter((p: Product) => p.is_active));
+      // 強制型別轉換，並處理 is_active 預設為 true
+      setProducts((res.data as any[]).filter((p) => p.is_active !== false));
     } catch {
       message.error("載入商品失敗");
     } finally {
@@ -37,7 +38,18 @@ const ShopPage: React.FC = () => {
   };
 
   const addToCart = (id: number) => {
-    // 省略實作，同你的程式碼
+    const cartRaw = localStorage.getItem("oms-cart") || "[]";
+    let cart: { id: number; qty: number }[] = [];
+    try {
+      cart = JSON.parse(cartRaw);
+    } catch {}
+    const idx = cart.findIndex((item) => item.id === id);
+    if (idx > -1) {
+      cart[idx].qty += 1;
+    } else {
+      cart.push({ id, qty: 1 });
+    }
+    localStorage.setItem("oms-cart", JSON.stringify(cart));
     message.success("已加入購物車");
   };
 

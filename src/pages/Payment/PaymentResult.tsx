@@ -16,48 +16,47 @@ const PaymentResult: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 1. 讀取真正的 MerchantTradeNo
-    const mtn = searchParams.get("MerchantTradeNo");
-    if (!mtn) {
-      notification.error({ message: "錯誤", description: "找不到訂單編號" });
+    // 1. 讀取 RtnCode（綠界回傳交易結果）
+    const rtnCode = searchParams.get("RtnCode");
+    if (!rtnCode) {
+      notification.error({
+        message: "錯誤",
+        description: "找不到交易結果代碼 (RtnCode)",
+      });
       setLoading(false);
       return;
     }
 
-    // 2. 解析出數字 ID
-    const orderId = parseInt(mtn.replace(/^OMS/, ""), 10);
-    if (isNaN(orderId)) {
-      notification.error({ message: "錯誤", description: "訂單編號格式錯誤" });
+    // 2. 判断交易是否成功
+    const paid = rtnCode === "1";
+    if (paid) {
+      notification.success({
+        message: "付款成功",
+        description: "感謝您的付款，我們正在為您更新訂單狀態。",
+      });
+    } else {
+      notification.error({
+        message: "付款失敗",
+        description: `交易結果代碼：${rtnCode}，請稍後聯絡客服或重試。`,
+      });
+    }
+
+    // 3. 讀取 order_sn
+    const orderSn = searchParams.get("order_sn");
+    if (!orderSn) {
+      notification.error({
+        message: "錯誤",
+        description: "找不到訂單編號 (order_sn)",
+      });
       setLoading(false);
       return;
     }
-    // 3. 呼叫後端取得訂單
+
+    // 4. 向後端以 order_sn 查訂單資料
     axios
-      .get<Order>(`/api/orders/${orderId}`)
+      .get<Order>(`/api/orders/sn/${orderSn}`)
       .then((res) => {
-        const ord = res.data;
-        setOrder(ord);
-
-        // 4. 根據狀態顯示通知
-        switch (ord.status) {
-          case "paid":
-            notification.success({
-              message: "付款成功",
-              description: `訂單 ${ord.order_sn} 已付款成功！`,
-            });
-            break;
-          case "pending":
-            notification.warning({
-              message: "尚未付款",
-              description: `訂單 ${ord.order_sn} 尚未完成付款，請稍後重試或聯絡客服。`,
-            });
-            break;
-          default:
-            notification.error({
-              message: "付款異常",
-              description: `訂單 ${ord.order_sn} 狀態為 ${ord.status}，請聯絡客服。`,
-            });
-        }
+        setOrder(res.data);
       })
       .catch(() => {
         notification.error({
@@ -67,7 +66,7 @@ const PaymentResult: React.FC = () => {
       })
       .finally(() => {
         setLoading(false);
-        // 5. 3 秒後自動跳回訂單列表
+        // 5. 三秒後自動跳回訂單列表
         setTimeout(() => navigate("/orders"), 3000);
       });
   }, [navigate, searchParams]);
@@ -82,8 +81,8 @@ const PaymentResult: React.FC = () => {
           {order ? (
             <p>
               {order.status === "paid"
-                ? "感謝您的付款，系統將於 3 秒後自動回到訂單列表。"
-                : "系統處理完成，您可點擊下方按鈕返回訂單列表。"}
+                ? "系統已確認付款，將於 3 秒後自動回到訂單列表。"
+                : "系統處理完成，您可點擊下方按鈕手動返回訂單列表。"}
             </p>
           ) : (
             <p>處理完成。</p>

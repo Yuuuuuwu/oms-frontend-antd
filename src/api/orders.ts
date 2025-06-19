@@ -1,6 +1,7 @@
 import { fetchWithAuth } from "../utils/fetchWithAuth";
+import { BACKEND_URL } from '../utils/env';
 
-const API_URL = "http://localhost:5000/orders";
+const API_URL = `${BACKEND_URL}/orders`;
 
 export interface OrderItemPayload {
   product_id: number;
@@ -63,10 +64,11 @@ export async function getOrders(params?: {
   sort_order?: "asc" | "desc";
 }): Promise<{ data: Order[]; total: number }> {
   const url = new URL(API_URL);
-  if (params)
+  if (params) {
     Object.entries(params).forEach(
       ([k, v]) => v && url.searchParams.append(k, String(v))
     );
+  }
   const res = await fetchWithAuth(url.toString(), {
     headers: { "Content-Type": "application/json" },
   });
@@ -76,6 +78,16 @@ export async function getOrders(params?: {
 
 export async function getOrderDetail(orderId: number): Promise<Order> {
   const res = await fetchWithAuth(`${API_URL}/${orderId}`, {
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!res.ok) throw new Error("取得訂單詳情失敗");
+  return await res.json();
+}
+
+// 新增：以 order_sn 查訂單
+export async function getOrderBySn(orderSn: string): Promise<Order> {
+  const encodedSn = encodeURIComponent(orderSn);
+  const res = await fetchWithAuth(`${API_URL}/sn/${encodedSn}`, {
     headers: { "Content-Type": "application/json" },
   });
   if (!res.ok) throw new Error("取得訂單詳情失敗");
