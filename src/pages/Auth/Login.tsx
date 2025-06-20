@@ -25,6 +25,7 @@ const Login: React.FC = () => {
         alignItems: "center",
         justifyContent: "center",
         background: "#f0f2f5",
+        flexDirection: "column",
       }}
     >
       <Card title="OMS 登入" style={{ width: 350 }}>

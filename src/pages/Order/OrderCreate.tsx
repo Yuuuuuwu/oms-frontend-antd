@@ -179,7 +179,7 @@ const OrderCreate: React.FC = () => {
             {
               title: "單價",
               dataIndex: "price",
-              render: (v) => v,
+              render: (v) => `$${v}`,
             },
             {
               title: "數量",
@@ -195,7 +195,7 @@ const OrderCreate: React.FC = () => {
             },
             {
               title: "小計",
-              render: (_, r) => r.price * r.qty,
+              render: (_, r) => `$${r.price * r.qty}`,
             },
             {
               title: "操作",
@@ -213,7 +213,7 @@ const OrderCreate: React.FC = () => {
         />
         <div style={{ margin: "16px 0", textAlign: "right" }}>
           <b>總金額：</b>{" "}
-          <span style={{ color: "#d4380d", fontSize: 18 }}>{totalAmount}</span>
+          <span style={{ color: "#d4380d", fontSize: 18 }}>${totalAmount}</span>
         </div>
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={loading}>

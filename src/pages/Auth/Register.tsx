@@ -73,59 +73,32 @@ const Register: React.FC = () => {
   };
 
   return (
-    <>
-      <Card title="註冊" style={{ maxWidth: 500, margin: "50px auto" }}>
-        <Form layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            label="用戶名"
-            name="username"
-            rules={[{ required: true, message: "請輸入用戶名" }]}
-          >
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f0f2f5", flexDirection: "column" }}>
+      <Card title="註冊" style={{ width: 350 }}>
+        <Form layout="vertical" onFinish={onFinish} autoComplete="off">
+          <Form.Item label="用戶名" name="username" rules={[{ required: true, message: "請輸入用戶名" }]}>
             <Input />
           </Form.Item>
-
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[
-              { required: true, message: "請輸入Email" },
-              { type: "email", message: "請輸入有效的Email" },
-            ]}
-          >
+          <Form.Item label="Email" name="email" rules={[{ required: true, type: "email", message: "請輸入有效 Email" }]}>
             <Input />
           </Form.Item>
-
-          <Form.Item
-            label="密碼"
-            name="password"
-            rules={[{ required: true, message: "請輸入密碼" }]}
-          >
+          <Form.Item label="密碼" name="password" rules={[{ required: true, message: "請輸入密碼" }]}>
             <Input.Password />
           </Form.Item>
-
-          <Form.Item
-            label="確認密碼"
-            name="confirm"
-            dependencies={["password"]}
-            rules={[
-              { required: true, message: "請確認密碼" },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue("password") === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(new Error("兩次輸入的密碼不一致"));
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
+          <Form.Item label="角色" name="role" rules={[{ required: true, message: "請選擇角色" }]}>
+            <Select placeholder="請選擇角色">
+              <Option value="admin">管理員</Option>
+              <Option value="seller">賣家</Option>
+              <Option value="customer">顧客</Option>
+            </Select>
           </Form.Item>
-
           <Form.Item>
             <Button type="primary" htmlType="submit" block>
               註冊
             </Button>
+          </Form.Item>
+          <Form.Item>
+            已有帳號？<a href="/login">登入</a>
           </Form.Item>
         </Form>
       </Card>
@@ -161,7 +134,7 @@ const Register: React.FC = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </>
+    </div>
   );
 };
 

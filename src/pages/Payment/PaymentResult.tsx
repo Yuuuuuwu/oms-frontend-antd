@@ -57,17 +57,22 @@ const PaymentResult: React.FC = () => {
       .get<Order>(`/api/orders/sn/${orderSn}`)
       .then((res) => {
         setOrder(res.data);
+        // 5. 三秒後自動跳回訂單詳情
+        setTimeout(() => {
+          setLoading(true); // 顯示切換提示
+          navigate(`/orders/${res.data.id}`);
+        }, 3000);
       })
       .catch(() => {
         notification.error({
           message: "錯誤",
           description: "無法查詢訂單狀態，請稍後再試。",
         });
+        // 5. 三秒後自動跳回訂單列表
+        setTimeout(() => navigate("/orders"), 3000);
       })
       .finally(() => {
         setLoading(false);
-        // 5. 三秒後自動跳回訂單列表
-        setTimeout(() => navigate("/orders"), 3000);
       });
   }, [navigate, searchParams]);
 
@@ -75,13 +80,13 @@ const PaymentResult: React.FC = () => {
     <div style={{ textAlign: "center", padding: "2rem" }}>
       <h2>付款結果</h2>
       {loading ? (
-        <Spin tip="正在加載訂單資訊..." />
+        <Spin tip={order ? "正在切換至訂單詳情中，請稍後..." : "正在加載訂單資訊..."} />
       ) : (
         <>
           {order ? (
             <p>
               {order.status === "paid"
-                ? "系統已確認付款，將於 3 秒後自動回到訂單列表。"
+                ? "系統已確認付款，將於 3 秒後自動前往訂單詳情。"
                 : "系統處理完成，您可點擊下方按鈕手動返回訂單列表。"}
             </p>
           ) : (

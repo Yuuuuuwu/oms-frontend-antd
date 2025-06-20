@@ -36,6 +36,7 @@ const OrderPage: React.FC = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<number[]>([]);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("oms-user") || "{}");
 
   const fetchOrders = async (params = {}) => {
     setLoading(true);
@@ -89,9 +90,26 @@ const OrderPage: React.FC = () => {
     });
   };
 
+  const handleDelete = (id: number) => {
+    Modal.confirm({
+      title: "確定要刪除此訂單嗎？",
+      onOk: async () => {
+        try {
+          await import("../../api/orders").then((m) => m.deleteOrder(id));
+          message.success("訂單刪除成功");
+          fetchOrders();
+        } catch (e: any) {
+          message.error(e.message || "刪除失敗");
+        }
+      },
+    });
+  };
+
   const columns = [
     { title: "訂單編號", dataIndex: "order_sn", sorter: true },
     { title: "金額", dataIndex: "total_amount", sorter: true },
+    // 新增客戶欄
+    { title: "客戶", dataIndex: ["user", "username"], render: (v: string, record: any) => record.user?.username || "-" },
     {
       title: "狀態",
       dataIndex: "status",
@@ -111,14 +129,39 @@ const OrderPage: React.FC = () => {
         );
       },
     },
-    { title: "建立日期", dataIndex: "created_at", sorter: true },
+    {
+      title: "建立日期",
+      dataIndex: "created_at",
+      sorter: true,
+      render: (v: string) =>
+        v ? new Date(v).toLocaleString("zh-TW", { hour12: false }) : "",
+    },
     { title: "備註", dataIndex: "remark" },
     {
       title: "操作",
       render: (_: any, record: any) => (
-        <Button type="link" onClick={() => navigate(`/orders/${record.id}`)}>
-          查看詳情
-        </Button>
+        <>
+          <Button type="link" onClick={() => navigate(`/orders/${record.id}`)}>
+            查看詳情
+          </Button>
+          {user?.role === "admin" && (
+            <>
+              <Button
+                type="link"
+                onClick={() => navigate(`/orders/${record.id}/edit`)}
+              >
+                編輯
+              </Button>
+              <Button
+                type="link"
+                danger
+                onClick={() => handleDelete(record.id)}
+              >
+                刪除
+              </Button>
+            </>
+          )}
+        </>
       ),
     },
   ];

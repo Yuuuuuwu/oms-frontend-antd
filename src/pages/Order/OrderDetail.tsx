@@ -71,9 +71,14 @@ const OrderDetail: React.FC = () => {
           {order?.order_sn}
         </Descriptions.Item>
         <Descriptions.Item label="金額">
-          {order?.total_amount}
+          ${order?.total_amount}
         </Descriptions.Item>
-        <Descriptions.Item label="狀態">{order?.status}</Descriptions.Item>
+        <Descriptions.Item label="狀態">{
+          (() => {
+            const map: Record<string, string> = { pending: "待付款", paid: "已付款", shipping: "配送中", completed: "已完成", cancelled: "已取消" };
+            return map[order?.status] || order?.status;
+          })()
+        }</Descriptions.Item>
         <Descriptions.Item label="收件人">
           {order?.receiver_name}
         </Descriptions.Item>
@@ -93,9 +98,9 @@ const OrderDetail: React.FC = () => {
           pagination={false}
           columns={[
             { title: "商品名稱", dataIndex: "product_name" },
-            { title: "單價", dataIndex: "price" },
+            { title: "單價", dataIndex: "price", render: (v: number) => `$${v}` },
             { title: "數量", dataIndex: "qty" },
-            { title: "小計", render: (_: any, r: any) => r.price * r.qty },
+            { title: "小計", render: (_: any, r: any) => `$${r.price * r.qty}` },
           ]}
         />
       </div>
@@ -106,9 +111,13 @@ const OrderDetail: React.FC = () => {
           rowKey="id"
           pagination={false}
           columns={[
-            { title: "狀態", dataIndex: "status" },
+            { title: "狀態", dataIndex: "status", render: (v: string) => {
+                const map: Record<string, string> = { pending: "待付款", paid: "已付款", shipping: "配送中", completed: "已完成", cancelled: "已取消" };
+                return map[v] || v;
+              }
+            },
             { title: "操作人", dataIndex: "operator" },
-            { title: "時間", dataIndex: "operated_at" },
+            { title: "時間", dataIndex: "operated_at", render: (v: string) => v ? new Date(v).toLocaleString('zh-TW', { hour12: false }) : "" },
             { title: "備註", dataIndex: "remark" },
           ]}
         />

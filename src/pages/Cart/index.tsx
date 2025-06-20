@@ -89,7 +89,7 @@ const CartPage: React.FC = () => {
         </div>
       ),
     },
-    { title: "單價", dataIndex: "price" },
+    { title: "單價", dataIndex: "price", render: (v: number) => `$${v}` },
     {
       title: "數量",
       dataIndex: "qty",
@@ -104,7 +104,7 @@ const CartPage: React.FC = () => {
     },
     {
       title: "小計",
-      render: (_: any, record: CartItem) => record.price * record.qty,
+      render: (_: any, record: CartItem) => `$${record.price * record.qty}`,
     },
     {
       title: "操作",
@@ -160,7 +160,7 @@ const CartPage: React.FC = () => {
         pagination={false}
       />
       <div style={{ marginTop: 16, textAlign: "right" }}>
-        <b>總金額：￥{total}</b>
+        <b>總金額：${total}</b>
         <Button
           type="primary"
           onClick={() => setCheckoutOpen(true)}
