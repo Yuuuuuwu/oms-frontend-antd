@@ -113,7 +113,7 @@ const ProductPage: React.FC = () => {
         title: `商品詳情 - ${product.name}`,
         content: (
           <div>
-            <div>價格：{product.price}</div>
+            <div>價格：${product.price}</div>
             <div>庫存：{product.stock}</div>
             <div>描述：{product.desc}</div>
             <div>啟用：{product.is_active ? "是" : "否"}</div>
@@ -224,7 +224,7 @@ const ProductPage: React.FC = () => {
   const columns = [
     { title: "商品編號", dataIndex: "id" },
     { title: "名稱", dataIndex: "name" },
-    { title: "價格", dataIndex: "price" },
+    { title: "價格", dataIndex: "price", render: (v: number) => `$${v}` },
     { title: "庫存", dataIndex: "stock" },
     {
       title: "啟用",

@@ -17,11 +17,14 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import NotificationDropdown from "../components/NotificationDropdown";
 import type { NotificationType } from "../types/NotificationType";
 import { useThemeLang } from "../contexts/ThemeLangContext";
+import { fetchWithAuth } from "../utils/fetchWithAuth";
+import type { MenuDataItem } from "@ant-design/pro-components";
 
 // 擴充 dayjs 支援 relativeTime
 dayjs.extend(relativeTime);
 
-const MainLayout: React.FC = () => {
+// 讓 MainLayout 支援 children
+const MainLayout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("oms-user") || "{}");
 
@@ -61,61 +64,62 @@ const MainLayout: React.FC = () => {
   };
 
   // 假通知資料
-  const [notifications, setNotifications] = useState<NotificationType[]>([
-    {
-      id: 1,
-      title: "新訂單通知",
-      description: "您有一筆新的訂單需要處理",
-      read: false,
-      type: "order",
-      link: "/orders/1",
-      time: dayjs().subtract(5, "minute"),
-    },
-    {
-      id: 2,
-      title: "系統公告",
-      description: "本週六凌晨02:00~04:00系統維護",
-      read: false,
-      type: "system",
-      link: "/dashboard",
-      time: dayjs().subtract(1, "hour"),
-    },
-    {
-      id: 3,
-      title: "客戶留言",
-      description: "王小明：請儘快出貨，謝謝！",
-      read: true,
-      type: "customer",
-      link: "/customers",
-      time: dayjs().subtract(3, "hour"),
-    },
-  ]);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
 
-  // 未讀數量
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  // 從後端取得通知
+  const fetchNotifications = async () => {
+    try {
+      const res = await fetchWithAuth("/notifications");
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(
+          data.map((n: any) => ({
+            ...n,
+            time: dayjs(n.created_at),
+            read: n.is_read,
+          }))
+        );
+      }
+    } catch {}
+  };
+  React.useEffect(() => {
+    if (user?.role && user?.role !== "guest") fetchNotifications();
+  }, [user?.role]);
 
   // 單筆設為已讀
-  const handleRead = (id: number, link?: string) => {
-    setNotifications((nots) =>
-      nots.map((n) => (n.id === id ? { ...n, read: true } : n))
-    );
-    if (link) navigate(link);
+  const handleRead = async (id: number, link?: string) => {
+    try {
+      await fetchWithAuth(`/notifications/${id}/read`, { method: "POST" });
+      setNotifications((nots) =>
+        nots.map((n) => (n.id === id ? { ...n, read: true } : n))
+      );
+      if (link) navigate(link);
+    } catch {
+      if (link) navigate(link);
+    }
   };
 
   // 全部設為已讀
-  const handleMarkAllRead = () =>
+  const handleMarkAllRead = async () => {
+    await Promise.all(
+      notifications
+        .filter((n) => !n.read)
+        .map((n) =>
+          fetchWithAuth(`/notifications/${n.id}/read`, { method: "POST" })
+        )
+    );
     setNotifications((nots) => nots.map((n) => ({ ...n, read: true })));
+  };
 
   // 查看全部通知
   const handleViewAll = () => navigate("/notifications");
 
   // 依角色動態產生側邊選單
-  let menuData = [];
+  let menuData: MenuDataItem[] = [];
   if (user?.role === "admin") {
     menuData = [
-      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
       { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
-      { path: "/fakedashboard", name: "假儀表板", icon: <DashboardOutlined /> },
+      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
       { path: "/cart", name: "購物車", icon: <AppstoreOutlined /> },
       { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
       { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> },
@@ -129,11 +133,12 @@ const MainLayout: React.FC = () => {
         name: "使用者管理",
         icon: <UserOutlined />,
       },
+      { path: "/notifications", name: "通知", icon: <BellOutlined /> },
     ];
   } else if (user?.role === "seller") {
     menuData = [
-      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
       { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
+      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
       { path: "/cart", name: "購物車", icon: <AppstoreOutlined /> },
       { path: "/orders", name: "訂單管理", icon: <OrderedListOutlined /> },
       { path: "/products", name: "商品管理", icon: <AppstoreOutlined /> },
@@ -142,19 +147,21 @@ const MainLayout: React.FC = () => {
         name: "客戶管理",
         icon: <UsergroupAddOutlined />,
       },
+      { path: "/notifications", name: "通知", icon: <BellOutlined /> },
     ];
   } else if (user?.role === "customer") {
     menuData = [
-      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
       { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
+      { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
       { path: "/cart", name: "購物車", icon: <AppstoreOutlined /> },
       { path: "/orders", name: "我的訂單", icon: <OrderedListOutlined /> },
+      { path: "/notifications", name: "通知", icon: <BellOutlined /> },
     ];
   } else {
     // guest
     menuData = [
       { path: "/shop", name: "商品瀏覽", icon: <AppstoreOutlined /> },
-      { path: "/dashboard", name: "儀表板", icon: <DashboardOutlined /> },
+      { path: "/cart", name: "購物車", icon: <AppstoreOutlined /> },
     ];
   }
 
@@ -205,26 +212,28 @@ const MainLayout: React.FC = () => {
       <BulbOutlined />
     </span>,
 
-    // 通知下拉
-    <Dropdown
-      key="notice"
-      overlay={
-        <NotificationDropdown
-          theme={theme}
-          notifications={notifications}
-          onRead={handleRead}
-          onMarkAllRead={handleMarkAllRead}
-          onViewAll={handleViewAll}
-        />
-      }
-      placement="bottomRight"
-      trigger={["click"]}
-      arrow
-    >
-      <Badge count={unreadCount} size="small">
-        <BellOutlined style={{ fontSize: 22, cursor: "pointer" }} />
-      </Badge>
-    </Dropdown>,
+    // 通知下拉（僅登入者可見）
+    user?.role && user?.role !== "guest" && (
+      <Dropdown
+        key="notice"
+        overlay={
+          <NotificationDropdown
+            theme={theme}
+            notifications={notifications}
+            onRead={handleRead}
+            onMarkAllRead={handleMarkAllRead}
+            onViewAll={handleViewAll}
+          />
+        }
+        placement="bottomRight"
+        trigger={["click"]}
+        arrow
+      >
+        <Badge count={notifications.filter((n) => !n.read).length} size="small">
+          <BellOutlined style={{ fontSize: 22, cursor: "pointer" }} />
+        </Badge>
+      </Dropdown>
+    ),
   ];
 
   return (
@@ -236,45 +245,58 @@ const MainLayout: React.FC = () => {
       splitMenus={false}
       navTheme={navTheme}
       route={{ routes: menuData }}
-      menuItemRender={(item, dom) => <a href={item.path}>{dom}</a>}
-      // 頭像點擊可進個人中心或登出
-      avatarProps={{
-        src:
-          "https://api.dicebear.com/7.x/miniavs/svg?seed=" +
-          (user?.username || "user"),
-        title: user?.username,
-        size: "small",
-        render: (props, dom) => (
-          <Dropdown
-            overlay={
-              <Menu>
-                <Menu.Item key="profile" onClick={() => navigate("/profile")}>
-                  個人中心
-                </Menu.Item>
-                <Menu.Item
-                  key="logout"
-                  danger
-                  onClick={() => {
-                    localStorage.removeItem("oms-user");
-                    navigate("/login");
-                  }}
+      menuItemRender={(item, dom) =>
+        // 未登入時點logo或標題回landing
+        (!user?.role || user?.role === "guest") && (item.path === "/dashboard" || item.path === "/" || item.path === undefined)
+          ? <a href="/">{dom}</a>
+          : <a href={item.path}>{dom}
+        </a>
+      }
+      avatarProps={
+        user?.role && user?.role !== "guest"
+          ? {
+              src:
+                "https://api.dicebear.com/7.x/miniavs/svg?seed=" +
+                (user?.username || "user"),
+              title: user?.username,
+              size: "small",
+              render: (props, dom) => (
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item key="profile" onClick={() => navigate("/profile")}>
+                        個人中心
+                      </Menu.Item>
+                      <Menu.Item
+                        key="logout"
+                        danger
+                        onClick={() => {
+                          localStorage.removeItem("oms-user");
+                          navigate("/login");
+                        }}
+                      >
+                        登出
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  placement="bottomRight"
+                  trigger={["click"]}
                 >
-                  登出
-                </Menu.Item>
-              </Menu>
+                  {dom}
+                </Dropdown>
+              ),
             }
-            placement="bottomRight"
-            trigger={["click"]}
-          >
-            {dom}
-          </Dropdown>
-        ),
-      }}
+          : undefined
+      }
       token={theme === "dark" ? darkToken : lightToken}
-      actionsRender={() => actions}
+      actionsRender={() =>
+        user?.role && user?.role !== "guest"
+          ? actions
+          : [actions[0], actions[1]]
+      }
     >
       <PageContainer>
-        <Outlet />
+        {children ? children : <Outlet />}
       </PageContainer>
     </ProLayout>
   );

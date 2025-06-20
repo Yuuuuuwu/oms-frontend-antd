@@ -11,7 +11,7 @@ const UserPage: React.FC = () => {
   useEffect(() => {
     setLoading(true);
     getUsers()
-      .then(setUsers)
+      .then((res) => setUsers(res.data))
       .catch(() => message.error("取得用戶失敗"))
       .finally(() => setLoading(false));
   }, []);
@@ -33,12 +33,23 @@ const UserPage: React.FC = () => {
         <Tag color={v === "admin" ? "gold" : "blue"}>{v}</Tag>
       ),
     },
-    { title: "建立時間", dataIndex: "created_at" },
     {
       title: "狀態",
       dataIndex: "is_active",
       render: (v: boolean) =>
         v ? <Tag color="green">啟用</Tag> : <Tag color="red">停用</Tag>,
+    },
+    {
+      title: "創建時間",
+      dataIndex: "created_at",
+      render: (v: string) =>
+        v ? new Date(v).toLocaleString("zh-TW", { hour12: false }) : "",
+    },
+    {
+      title: "最後登入時間",
+      dataIndex: "last_login",
+      render: (v: string) =>
+        v ? new Date(v).toLocaleString("zh-TW", { hour12: false }) : "",
     },
     {
       title: "操作",
