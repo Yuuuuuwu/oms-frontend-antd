@@ -1,34 +1,44 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Row, Statistic, Button } from "antd";
+import { Card, Col, Row, Statistic, Button, message } from "antd";
 import { Bar } from "@ant-design/charts";
 import { PlusOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useThemeLang } from "../../contexts/ThemeLangContext";
 import { axiosWithAuth } from "../../utils/axiosWithAuth";
-import { BACKEND_URL } from "../../utils/env";
+
+interface Summary {
+  total_sales: number;
+  order_count: number;
+  customer_count: number;
+  monthly_sales?: { month: string; value: number }[];
+}
 
 const Dashboard: React.FC = () => {
   const { theme } = useThemeLang();
-  const [summary, setSummary] = useState<null | {
-    total_sales: number;
-    order_count: number;
-    customer_count: number;
-  }>(null);
-  const [barData, setBarData] = useState<any[]>([]);
+
+  // 1. Summary 狀態，初始為 null 表示還沒取到／或失敗
+  const [summary, setSummary] = useState<Summary | null>(null);
+  // 2. 長條圖資料
+  const [barData, setBarData] = useState<{ month: string; value: number }[]>([]);
 
   useEffect(() => {
     // 取得 dashboard 統計資料
-    axiosWithAuth.get(`${BACKEND_URL}/dashboard/summary`)
+    axiosWithAuth.get<Summary>(`/dashboard/summary`)
       .then((res) => {
-        const data = res.data;
-        setSummary(data);
-        if (data.monthly_sales) setBarData(data.monthly_sales);
+        setSummary(res.data);
+        // 如果有 monthly_sales 就設定
+        if (res.data.monthly_sales) {
+          setBarData(res.data.monthly_sales);
+        }
       })
-      .catch(() => setSummary(null)); // 失敗時 summary 設為 null
+      .catch((err) => {
+        message.error("載入統計資料失敗");
+        setSummary(null);
+      });
   }, []);
 
   return (
     <div>
-      {/* 快速操作區 */}
+      {/* ===== 快速操作區 ===== */}
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col>
           <Button type="primary" icon={<PlusOutlined />} href="/order/create">
@@ -39,116 +49,66 @@ const Dashboard: React.FC = () => {
           <Button icon={<DownloadOutlined />}>下載報表</Button>
         </Col>
       </Row>
-      {/* 數據卡片 */}
+
+      {/* ===== 數據卡片 ===== */}
       <Row gutter={16}>
         {summary === null ? (
-          <Col span={24}>[
-            <Card key="empty">
+          // 資料還沒讀到或失敗
+          <Col span={24}>
+            <Card>
               <Statistic title="暫無數據" value={0} />
             </Card>
-          ]</Col>
+          </Col>
         ) : (
           <>
-            <Col span={6}>[
-              <Card key="total_sales">
+            <Col span={6}>
+              <Card>
                 <Statistic
                   title="總銷售額"
                   value={summary.total_sales}
-                  prefix="￥"
+                  prefix="$"
                 />
               </Card>
-            ]</Col>
-            <Col span={6}>[
-              <Card key="order_count">
+            </Col>
+            <Col span={6}>
+              <Card>
                 <Statistic title="訂單數" value={summary.order_count} />
               </Card>
-            ]</Col>
-            <Col span={6}>[
-              <Card key="customer_count">
+            </Col>
+            <Col span={6}>
+              <Card>
                 <Statistic title="客戶數" value={summary.customer_count} />
               </Card>
-            ]</Col>
-            <Col span={6}>[
-              <Card key="conversion">
-                <Statistic title="轉換率" value={78} suffix="%" />
-              </Card>
-            ]</Col>
+            </Col>
+            {/* 如果還有其他欄位再放 */}
           </>
         )}
       </Row>
-      {/* 假資料區塊：展示有數據時的樣貌 */}
+
+      {/* ===== 長條圖＆預覽統計 ===== */}
       <Row gutter={16} style={{ marginTop: 24 }}>
-        <Col span={16}>[
-          <Card key="bar" title="月度銷售額">
-            {barData.length ? (
+        <Col span={16}>
+          <Card title="月度銷售額">
+            {barData.length > 0 ? (
               <Bar
                 data={barData}
                 xField="value"
                 yField="month"
-                color="#1890ff"
                 height={260}
+                // 以下略：色彩、格線、字體樣式可保留原本邏輯
                 xAxis={{
-                  label: {
-                    style: {
-                      fill: theme === "dark" ? "#f7fafc" : "#222",
-                      fontWeight: 600,
-                    },
-                  },
-                  line: {
-                    style: {
-                      stroke: theme === "dark" ? "#555" : "#ccc",
-                      lineWidth: 1.5,
-                    },
-                  },
-                  tickLine: {
-                    style: {
-                      stroke: theme === "dark" ? "#555" : "#ccc",
-                      lineWidth: 1.5,
-                    },
-                  },
-                  grid: {
-                    line: {
-                      style: {
-                        stroke: theme === "dark" ? "#31343f" : "#eee",
-                        lineDash: [4, 4],
-                      },
-                    },
-                  },
+                  label: { style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } },
+                  line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
+                  tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
+                  grid: { line: { style: { stroke: theme === "dark" ? "#31343f" : "#eee", lineDash: [4,4] } } },
                 }}
                 yAxis={{
-                  label: {
-                    style: {
-                      fill: theme === "dark" ? "#f7fafc" : "#222",
-                      fontWeight: 600,
-                    },
-                  },
-                  line: {
-                    style: {
-                      stroke: theme === "dark" ? "#555" : "#ccc",
-                      lineWidth: 1.5,
-                    },
-                  },
-                  tickLine: {
-                    style: {
-                      stroke: theme === "dark" ? "#555" : "#ccc",
-                      lineWidth: 1.5,
-                    },
-                  },
-                  grid: {
-                    line: {
-                      style: {
-                        stroke: theme === "dark" ? "#31343f" : "#eee",
-                        lineDash: [4, 4],
-                      },
-                    },
-                  },
+                  label: { style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } },
+                  line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
+                  tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
+                  grid: { line: { style: { stroke: theme === "dark" ? "#31343f" : "#eee", lineDash: [4,4] } } },
                 }}
-                label={{
-                  style: {
-                    fill: theme === "dark" ? "#f7fafc" : "#222",
-                    fontWeight: 600,
-                  },
-                }}
+                label={{ style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } }}
               />
             ) : (
               <div style={{ textAlign: "center", color: "#aaa", padding: 48 }}>
@@ -156,34 +116,24 @@ const Dashboard: React.FC = () => {
               </div>
             )}
           </Card>
-        ]</Col>
-        <Col span={8}>[
-          <Card key="preview" title="數據預覽（假資料展示）">
-            <ul style={{ paddingLeft: 16 }}>
-              <li>
-                本月新訂單：<b>12</b>
-              </li>
-              <li>
-                本月新客戶：<b>5</b>
-              </li>
-              <li>
-                本月營收：<b>￥8,800</b>
-              </li>
-              <li>
-                本月活躍用戶：<b>21</b>
-              </li>
-            </ul>
-            <div
-              style={{
-                color: "#aaa",
-                fontSize: 12,
-                marginTop: 8,
-              }}
-            >
-              * 實際數據將於串接後端後自動顯示
-            </div>
+        </Col>
+
+        <Col span={8}>
+          <Card title="數據預覽">
+            {summary === null ? (
+              <div style={{ textAlign: "center", color: "#aaa", padding: 48 }}>
+                暫無數據
+              </div>
+            ) : (
+              <ul style={{ paddingLeft: 16 }}>
+                <li>本月新訂單：<b>{summary.order_count}</b></li>
+                <li>本月新客戶：<b>{summary.customer_count}</b></li>
+                <li>本月營收：<b>${summary.total_sales}</b></li>
+                {/* 若後端有其他欄位就再加上去 */}
+              </ul>
+            )}
           </Card>
-        ]</Col>
+        </Col>
       </Row>
     </div>
   );

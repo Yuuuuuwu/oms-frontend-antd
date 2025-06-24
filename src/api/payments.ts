@@ -3,7 +3,7 @@ import type { Payment, PaymentPayload } from "../types/Payment";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { BACKEND_URL } from '../utils/env';
 
-const API_URL = `${BACKEND_URL}/payments`;
+const API_URL = `/payments`;
 
 export async function payOrder(
   order_id: number,

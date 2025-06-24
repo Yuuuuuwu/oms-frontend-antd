@@ -1,5 +1,4 @@
 import { axiosWithAuth } from "./axiosWithAuth";
-import { BACKEND_URL } from "./env";
 import type { User } from "../types/User";
 
 const LOCAL_STORAGE_USER_KEY = "oms-user";
@@ -7,9 +6,9 @@ const LOCAL_STORAGE_TOKEN_KEY = "oms-token";
 
 export async function login(email: string, password: string): Promise<boolean> {
   try {
-    const res = await axiosWithAuth.post(`${BACKEND_URL}/auth/login`, { email, password });
+    const res = await axiosWithAuth.post(`/auth/login`, { email, password });
     const token: string = res.data.access_token;
-    const meRes = await axiosWithAuth.get(`${BACKEND_URL}/auth/me`, {
+    const meRes = await axiosWithAuth.get(`/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     const meData = meRes.data;
@@ -40,7 +39,7 @@ export function logout() {
 
 export async function forgotPassword(email: string): Promise<string | null> {
   try {
-    const res = await axiosWithAuth.post(`${BACKEND_URL}/auth/forgot-password`, { email });
+    const res = await axiosWithAuth.post(`/auth/forgot-password`, { email });
     return res.data.reset_token;
   } catch {
     return null;
@@ -49,7 +48,7 @@ export async function forgotPassword(email: string): Promise<string | null> {
 
 export async function resetPassword(token: string, newPassword: string): Promise<boolean> {
   try {
-    await axiosWithAuth.post(`${BACKEND_URL}/auth/reset-password`, { token, new_password: newPassword });
+    await axiosWithAuth.post(`/auth/reset-password`, { token, new_password: newPassword });
     return true;
   } catch {
     return false;
@@ -70,7 +69,7 @@ export async function register(
   phone?: string
 ): Promise<boolean> {
   try {
-    await axiosWithAuth.post(`${BACKEND_URL}/auth/register`, { username, email, password, role, phone });
+    await axiosWithAuth.post(`/auth/register`, { username, email, password, role, phone });
     return true;
   } catch (err) {
     console.error("register 發生錯誤：", err);

@@ -3,7 +3,7 @@ import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { BACKEND_URL } from "../utils/env";
 import type { User, UserPayload } from "../types/User";
 
-const API_URL = `${BACKEND_URL}/users`;
+const API_URL = `/users`;
 
 /**
  * 取得所有使用者列表

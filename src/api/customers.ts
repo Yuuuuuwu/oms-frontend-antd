@@ -1,10 +1,9 @@
 import type { Customer } from '../types/Customer';
 import { axiosWithAuth } from '../utils/axiosWithAuth';
-import { BACKEND_URL } from '../utils/env';
 
 export async function fetchCustomers() {
   try {
-    const res = await axiosWithAuth.get(`${BACKEND_URL}/customers`);
+    const res = await axiosWithAuth.get(`/customers`);
     return res.data;
   } catch (e) {
     console.error("取得客戶列表失敗", e);
@@ -14,7 +13,7 @@ export async function fetchCustomers() {
 
 export async function createCustomer(data: Omit<Customer, 'id'>) {
   try {
-    const res = await axiosWithAuth.post(`${BACKEND_URL}/customers`, data);
+    const res = await axiosWithAuth.post(`/customers`, data);
     return res.data;
   } catch (e) {
     console.error("新增客戶失敗", e);
@@ -24,7 +23,7 @@ export async function createCustomer(data: Omit<Customer, 'id'>) {
 
 export async function updateCustomer(id: string, data: Partial<Customer>) {
   try {
-    const res = await axiosWithAuth.put(`${BACKEND_URL}/customers/${id}`, data);
+    const res = await axiosWithAuth.put(`/customers/${id}`, data);
     return res.data;
   } catch (e) {
     console.error("更新客戶失敗", e);
@@ -34,7 +33,7 @@ export async function updateCustomer(id: string, data: Partial<Customer>) {
 
 export async function deleteCustomer(id: string) {
   try {
-    await axiosWithAuth.delete(`${BACKEND_URL}/customers/${id}`);
+    await axiosWithAuth.delete(`/customers/${id}`);
     return true;
   } catch (e) {
     console.error("刪除客戶失敗", e);
