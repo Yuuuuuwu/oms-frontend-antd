@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Card, message, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { resetPassword } from "../../utils/auth";
+import { resetPassword } from "../../api/auth";
 const { Paragraph } = Typography;
 
 const ResetPassword: React.FC = () => {

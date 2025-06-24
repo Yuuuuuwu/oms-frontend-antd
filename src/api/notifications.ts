@@ -1,26 +1,32 @@
-import axios from "axios";
-
-export interface Notification {
-  id: number;
-  user_id?: number;
-  type: string;
-  title: string;
-  content: string;
-  is_read: boolean;
-  created_at: string;
-}
+import { axiosWithAuth } from "../utils/axiosWithAuth";
+import { BACKEND_URL } from '../utils/env';
 
 export async function fetchNotifications() {
-  const res = await axios.get("/api/notifications");
-  return res.data;
+  try {
+    const res = await axiosWithAuth.get(`${BACKEND_URL}/notifications`);
+    return res.data;
+  } catch (e) {
+    console.error("取得通知列表失敗", e);
+    return [];
+  }
 }
 
 export async function markNotificationRead(id: number) {
-  const res = await axios.post(`/api/notifications/${id}/read`);
-  return res.data;
+  try {
+    const res = await axiosWithAuth.post(`${BACKEND_URL}/notifications/${id}/read`);
+    return res.data;
+  } catch (e) {
+    console.error("標記通知為已讀失敗", e);
+    return null;
+  }
 }
 
 export async function fetchOperationLogs() {
-  const res = await axios.get("/api/notifications/logs");
-  return res.data;
+  try {
+    const res = await axiosWithAuth.get(`${BACKEND_URL}/notifications/logs`);
+    return res.data;
+  } catch (e) {
+    console.error("取得操作紀錄失敗", e);
+    return [];
+  }
 }

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, message, Typography } from "antd";
+import { forgotPassword } from "../../api/auth";
 const { Paragraph } = Typography;
 
 const ForgotPassword: React.FC = () => {
@@ -10,19 +11,13 @@ const ForgotPassword: React.FC = () => {
   const onFinish = async (values: any) => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email }),
-      });
-      if (res.ok) {
-        const data = await res.json();
+      const resetToken = await forgotPassword(values.email);
+      if (resetToken) {
         setSent(true);
-        setResetToken(data.reset_token); // 實務應寄信，這裡直接顯示 token
+        setResetToken(resetToken);
         message.success("重設密碼信已寄出（測試用 token 已顯示）");
       } else {
-        const err = await res.json();
-        message.error(err.description || "寄送失敗");
+        message.error("寄送失敗");
       }
     } catch {
       message.error("寄送失敗");

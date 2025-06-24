@@ -13,7 +13,6 @@ import {
 import { getProducts } from "../../api/products";
 import { createOrder } from "../../api/orders";
 import { useNavigate } from "react-router-dom";
-import { getToken } from "../../utils/auth";
 
 const { Option } = Select;
 
@@ -39,7 +38,7 @@ const OrderCreate: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getProducts().then(setProducts);
+    getProducts().then((res) => setProducts(res.data));
   }, []);
 
   const handleAddItem = () => {

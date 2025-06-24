@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Card, Col, Row, Statistic, Button, message } from "antd";
+import { Card, Col, Row, Statistic, Button } from "antd";
 import { Bar } from "@ant-design/charts";
 import { PlusOutlined, DownloadOutlined } from "@ant-design/icons";
 import { useThemeLang } from "../../contexts/ThemeLangContext";
-import { getToken } from "../../utils/auth";
-import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import { axiosWithAuth } from "../../utils/axiosWithAuth";
+import { BACKEND_URL } from "../../utils/env";
 
 const Dashboard: React.FC = () => {
   const { theme } = useThemeLang();
@@ -17,16 +17,9 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     // 取得 dashboard 統計資料
-    fetchWithAuth("http://localhost:5000/dashboard/summary", {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+    axiosWithAuth.get(`${BACKEND_URL}/dashboard/summary`)
       .then((res) => {
-        if (!res.ok) throw new Error("無法取得儀錶板資料");
-        return res.json();
-      })
-      .then((data) => {
+        const data = res.data;
         setSummary(data);
         if (data.monthly_sales) setBarData(data.monthly_sales);
       })
@@ -49,44 +42,44 @@ const Dashboard: React.FC = () => {
       {/* 數據卡片 */}
       <Row gutter={16}>
         {summary === null ? (
-          <Col span={24}>
-            <Card>
+          <Col span={24}>[
+            <Card key="empty">
               <Statistic title="暫無數據" value={0} />
             </Card>
-          </Col>
+          ]</Col>
         ) : (
           <>
-            <Col span={6}>
-              <Card>
+            <Col span={6}>[
+              <Card key="total_sales">
                 <Statistic
                   title="總銷售額"
                   value={summary.total_sales}
                   prefix="￥"
                 />
               </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
+            ]</Col>
+            <Col span={6}>[
+              <Card key="order_count">
                 <Statistic title="訂單數" value={summary.order_count} />
               </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
+            ]</Col>
+            <Col span={6}>[
+              <Card key="customer_count">
                 <Statistic title="客戶數" value={summary.customer_count} />
               </Card>
-            </Col>
-            <Col span={6}>
-              <Card>
+            ]</Col>
+            <Col span={6}>[
+              <Card key="conversion">
                 <Statistic title="轉換率" value={78} suffix="%" />
               </Card>
-            </Col>
+            ]</Col>
           </>
         )}
       </Row>
       {/* 假資料區塊：展示有數據時的樣貌 */}
       <Row gutter={16} style={{ marginTop: 24 }}>
-        <Col span={16}>
-          <Card title="月度銷售額">
+        <Col span={16}>[
+          <Card key="bar" title="月度銷售額">
             {barData.length ? (
               <Bar
                 data={barData}
@@ -163,9 +156,9 @@ const Dashboard: React.FC = () => {
               </div>
             )}
           </Card>
-        </Col>
-        <Col span={8}>
-          <Card title="數據預覽（假資料展示）">
+        ]</Col>
+        <Col span={8}>[
+          <Card key="preview" title="數據預覽（假資料展示）">
             <ul style={{ paddingLeft: 16 }}>
               <li>
                 本月新訂單：<b>12</b>
@@ -190,7 +183,7 @@ const Dashboard: React.FC = () => {
               * 實際數據將於串接後端後自動顯示
             </div>
           </Card>
-        </Col>
+        ]</Col>
       </Row>
     </div>
   );

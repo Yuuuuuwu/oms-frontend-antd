@@ -6,7 +6,7 @@ import {
   updateCustomer,
   deleteCustomer,
 } from "../../api/customers";
-import type { Customer } from "../../api/customers";
+import type { Customer } from "../../types/Customer";
 
 const CustomerPage: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);

@@ -8,7 +8,7 @@ import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Dashboard from "./pages/Dashboard";
 import OrderPage from "./pages/Order";
-import UserList from "./pages/User/UserList";
+import Userpage from "./pages/User";
 import PaymentPage from "./pages/Payment";
 import PaymentResult from "./pages/Payment/PaymentResult";
 import OrderDetail from "./pages/Order/OrderDetail";
@@ -54,46 +54,45 @@ const AppInner: React.FC = () => {
   return (
     <ConfigProvider locale={locales[lang].antd} theme={antdThemeConfig}>
       <BrowserRouter>
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route
-              path="/*"
-              element={
-                <RequireAuth>
-                  <Routes>
-                    <Route path="shop" element={<ShopPage />} />
-                    <Route path="shop/:id" element={<ProductDetail />} />
-                    <Route path="dashboard" element={<Dashboard />} />
-                    <Route path="cart" element={<CartPage />} />
-                    <Route path="orders" element={<OrderPage />} />
-                    <Route path="users" element={<UserList />} />
-                    <Route path="payments" element={<PaymentPage />} />
-                    <Route path="payments/payment_result" element={<PaymentResult />} />
-                    <Route path="orders/:id" element={<OrderDetail />} />
-                    <Route path="orders/:id/edit" element={<OrderEdit />} />
-                    <Route path="orders/new" element={<OrderEdit />} />
-                    <Route path="products" element={<ProductPage />} />
-                    <Route path="customers" element={<CustomerPage />} />
-                    <Route path="profile" element={<Profile />} />
-                    <Route path="checkout/preview" element={<CheckoutPreview />} />
-                    <Route path="checkout/process" element={<CheckoutProcess />} />
-                    <Route path="payment-notification" element={<PaymentNotification />} />
-                    <Route path="notifications" element={<NotificationsPage />} />
-                    <Route path="report" element={<ReportPage />} />
-                    <Route path="products/category-manager" element={<CategoryManagerPage />} />
-                    <Route path="orders/create" element={<OrderCreatePage />} />
-                    <Route path="*" element={<Navigate to="/" />} />
-                  </Routes>
-                </RequireAuth>
-              }
-            />
-          </Routes>
-        </MainLayout>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          {/* Landing頁不包MainLayout，其餘頁面包MainLayout */}
+          <Route
+            path="*"
+            element={
+              <MainLayout>
+                <Routes>
+                  <Route path="login" element={<Login />} />
+                  <Route path="register" element={<Register />} />
+                  <Route path="forgot-password" element={<ForgotPassword />} />
+                  <Route path="reset-password" element={<ResetPassword />} />
+                  <Route path="shop" element={<ShopPage />} />
+                  <Route path="shop/:id" element={<ProductDetail />} />
+                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route path="cart" element={<CartPage />} />
+                  <Route path="orders" element={<OrderPage />} />
+                  <Route path="users" element={<Userpage />} />
+                  <Route path="payments" element={<PaymentPage />} />
+                  <Route path="payments/payment_result" element={<PaymentResult />} />
+                  <Route path="orders/:id" element={<OrderDetail />} />
+                  <Route path="orders/:id/edit" element={<OrderEdit />} />
+                  <Route path="orders/new" element={<OrderEdit />} />
+                  <Route path="products" element={<ProductPage />} />
+                  <Route path="customers" element={<CustomerPage />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="checkout/preview" element={<CheckoutPreview />} />
+                  <Route path="checkout/process" element={<CheckoutProcess />} />
+                  <Route path="payment-notification" element={<PaymentNotification />} />
+                  <Route path="notifications" element={<NotificationsPage />} />
+                  <Route path="report" element={<ReportPage />} />
+                  <Route path="products/category-manager" element={<CategoryManagerPage />} />
+                  <Route path="orders/create" element={<OrderCreatePage />} />
+                  <Route path="*" element={<Navigate to="/" />} />
+                </Routes>
+              </MainLayout>
+            }
+          />
+        </Routes>
       </BrowserRouter>
     </ConfigProvider>
   );
