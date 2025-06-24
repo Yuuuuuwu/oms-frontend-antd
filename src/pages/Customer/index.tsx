@@ -59,16 +59,17 @@ const CustomerPage: React.FC = () => {
     loadCustomers();
   };
 
-  const onFinish = async (values: Omit<Customer, "id">) => {
-    if (editing) {
-      await updateCustomer(editing.id, values);
-      message.success("更新成功");
-    } else {
-      await createCustomer(values);
-      message.success("新增成功");
-    }
+  const onFinish = async (values) => {
+  try {
+    const newCustomer = await createCustomer(values);
+    if (!newCustomer) throw new Error('新增失敗');
+    message.success("新增成功");
     setOpen(false);
     loadCustomers();
+  } catch (err) {
+    message.error("新增客戶失敗");
+    console.error(err);
+  }
   };
 
   const columns = [

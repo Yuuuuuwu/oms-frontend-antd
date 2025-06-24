@@ -4,8 +4,8 @@ import type { Product, ProductPayload, Category } from "../types/Product";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { BACKEND_URL } from '../utils/env';
 
-const API_URL = `${BACKEND_URL}/products`;
-const CAT_URL = `${BACKEND_URL}/categories`;
+const API_URL = `/products`;
+const CAT_URL = `/categories`;
 
 export async function getProducts(params?: any): Promise<{
   data: Product[];

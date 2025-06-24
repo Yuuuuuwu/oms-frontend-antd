@@ -2,7 +2,7 @@ import type { Order, OrderItem, OrderHistory } from "../types/Order";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { BACKEND_URL } from '../utils/env';
 
-const API_URL = `${BACKEND_URL}/orders`;
+const API_URL = `/orders`;
 
 export interface OrderItemPayload {
   product_id: number;

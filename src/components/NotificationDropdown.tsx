@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Card, List, Badge, Button } from "antd";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import type { Notification } from "../api/notifications";
+import type { Notification } from "../types/Notification";
 
 dayjs.extend(relativeTime);
 
