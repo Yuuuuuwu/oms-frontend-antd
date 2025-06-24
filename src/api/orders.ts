@@ -1,4 +1,5 @@
-import { fetchWithAuth } from "../utils/fetchWithAuth";
+import type { Order, OrderItem, OrderHistory } from "../types/Order";
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 import { BACKEND_URL } from '../utils/env';
 
 const API_URL = `${BACKEND_URL}/orders`;
@@ -8,51 +9,7 @@ export interface OrderItemPayload {
   qty: number;
 }
 
-export interface OrderPayload {
-  receiver_name: string;
-  receiver_phone: string;
-  shipping_address: string;
-  remark?: string;
-  items: OrderItemPayload[];
-}
-
-export interface OrderItem {
-  id: number;
-  order_id: number;
-  product_id: number;
-  product_name: string;
-  qty: number;
-  price: number;
-  created_at: string;
-}
-
-export interface OrderHistory {
-  id: number;
-  order_id: number;
-  status: string;
-  operator: string;
-  operated_at: string;
-  remark?: string;
-}
-
-export interface Order {
-  id: number;
-  order_sn: string;
-  user_id: number;
-  total_amount: number;
-  status: string;
-  shipping_fee: number;
-  payment_status: string;
-  remark?: string;
-  receiver_name: string;
-  receiver_phone: string;
-  shipping_address: string;
-  created_at: string;
-  updated_at?: string;
-  items: OrderItem[];
-  history?: OrderHistory[];
-}
-
+// 取得訂單列表
 export async function getOrders(params?: {
   status?: string;
   date_start?: string;
@@ -63,99 +20,88 @@ export async function getOrders(params?: {
   sort_by?: string;
   sort_order?: "asc" | "desc";
 }): Promise<{ data: Order[]; total: number }> {
-  const url = new URL(API_URL);
-  if (params) {
-    Object.entries(params).forEach(
-      ([k, v]) => v && url.searchParams.append(k, String(v))
-    );
+  try {
+    return (await axiosWithAuth.get(API_URL, { params })).data;
+  } catch (e) {
+    console.error("取得訂單列表失敗", e);
+    throw e;
   }
-  const res = await fetchWithAuth(url.toString(), {
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!res.ok) throw new Error("取得訂單失敗");
-  return await res.json();
 }
 
+// 取得單筆訂單詳情
 export async function getOrderDetail(orderId: number): Promise<Order> {
-  const res = await fetchWithAuth(`${API_URL}/${orderId}`, {
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!res.ok) throw new Error("取得訂單詳情失敗");
-  return await res.json();
+  try {
+    return (await axiosWithAuth.get(`${API_URL}/${orderId}`)).data;
+  } catch (e) {
+    console.error("取得訂單詳情失敗", e);
+    throw e;
+  }
 }
 
-// 新增：以 order_sn 查訂單
+// 以訂單編號查詢
 export async function getOrderBySn(orderSn: string): Promise<Order> {
-  const encodedSn = encodeURIComponent(orderSn);
-  const res = await fetchWithAuth(`${API_URL}/sn/${encodedSn}`, {
-    headers: { "Content-Type": "application/json" },
-  });
-  if (!res.ok) throw new Error("取得訂單詳情失敗");
-  return await res.json();
+  try {
+    const encodedSn = encodeURIComponent(orderSn);
+    return (await axiosWithAuth.get(`${API_URL}/sn/${encodedSn}`)).data;
+  } catch (e) {
+    console.error("以訂單編號查詢失敗", e);
+    throw e;
+  }
 }
 
-export async function createOrder(payload: OrderPayload): Promise<Order> {
-  const res = await fetchWithAuth(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    } as Record<string, string>,
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error("新增訂單失敗");
-  return await res.json();
+// 新增訂單
+export async function createOrder(payload: Order): Promise<Order> {
+  try {
+    return (await axiosWithAuth.post(API_URL, payload)).data;
+  } catch (e) {
+    console.error("新增訂單失敗", e);
+    throw e;
+  }
 }
 
+// 更新訂單
 export async function updateOrder(
   id: number,
-  payload: OrderPayload
+  payload: Order
 ): Promise<Order> {
-  const res = await fetchWithAuth(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    } as Record<string, string>,
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error("更新訂單失敗");
-  return await res.json();
+  try {
+    return (await axiosWithAuth.put(`${API_URL}/${id}`, payload)).data;
+  } catch (e) {
+    console.error("更新訂單失敗", e);
+    throw e;
+  }
 }
 
+// 批次更新訂單狀態
 export async function updateOrderStatus(
   ids: number[],
   status: string,
   remark?: string
 ): Promise<void> {
-  const res = await fetchWithAuth(`${API_URL}/status`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" } as Record<
-      string,
-      string
-    >,
-    body: JSON.stringify({ ids, status, remark }),
-  });
-  if (!res.ok) throw new Error("狀態更新失敗");
+  try {
+    await axiosWithAuth.put(`${API_URL}/status`, { ids, status, remark });
+  } catch (e) {
+    console.error("批次更新訂單狀態失敗", e);
+    throw e;
+  }
 }
 
-export async function getOrderHistory(
-  orderId: number
-): Promise<OrderHistory[]> {
-  const res = await fetchWithAuth(`${API_URL}/${orderId}/history`, {
-    headers: { "Content-Type": "application/json" } as Record<
-      string,
-      string
-    >,
-  });
-  if (!res.ok) throw new Error("取得歷史紀錄失敗");
-  return await res.json();
+// 查詢訂單歷史
+export async function getOrderHistory(orderId: number): Promise<OrderHistory[]> {
+  try {
+    return (await axiosWithAuth.get(`${API_URL}/${orderId}/history`)).data;
+  } catch (e) {
+    console.error("取得訂單歷史失敗", e);
+    throw e;
+  }
 }
 
+// 刪除訂單
 export async function deleteOrder(id: number): Promise<void> {
-  const res = await fetchWithAuth(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-    } as Record<string, string>,
-  });
-  if (!res.ok) throw new Error("刪除訂單失敗");
+  try {
+    await axiosWithAuth.delete(`${API_URL}/${id}`);
+  } catch (e) {
+    console.error("刪除訂單失敗", e);
+    throw e;
+  }
 }

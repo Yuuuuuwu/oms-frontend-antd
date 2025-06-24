@@ -1,42 +1,43 @@
-import { fetchWithAuth } from '../utils/fetchWithAuth';
-
-export interface Customer {
-  id: string;
-  name: string;
-  phone: string;
-  email: string;
-  // 可擴充: tags, address, ...
-}
+import type { Customer } from '../types/Customer';
+import { axiosWithAuth } from '../utils/axiosWithAuth';
+import { BACKEND_URL } from '../utils/env';
 
 export async function fetchCustomers() {
-  const res = await fetchWithAuth('http://localhost:5000/customers', {
-    headers: { 'Content-Type': 'application/json' },
-  });
-  return await res.json();
+  try {
+    const res = await axiosWithAuth.get(`${BACKEND_URL}/customers`);
+    return res.data;
+  } catch (e) {
+    console.error("取得客戶列表失敗", e);
+    return [];
+  }
 }
 
 export async function createCustomer(data: Omit<Customer, 'id'>) {
-  const res = await fetchWithAuth('http://localhost:5000/customers', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return await res.json();
+  try {
+    const res = await axiosWithAuth.post(`${BACKEND_URL}/customers`, data);
+    return res.data;
+  } catch (e) {
+    console.error("新增客戶失敗", e);
+    return null;
+  }
 }
 
 export async function updateCustomer(id: string, data: Partial<Customer>) {
-  const res = await fetchWithAuth(`http://localhost:5000/customers/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return await res.json();
+  try {
+    const res = await axiosWithAuth.put(`${BACKEND_URL}/customers/${id}`, data);
+    return res.data;
+  } catch (e) {
+    console.error("更新客戶失敗", e);
+    return null;
+  }
 }
 
 export async function deleteCustomer(id: string) {
-  const res = await fetchWithAuth(`http://localhost:5000/customers/${id}`, {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' },
-  });
-  return await res.json();
+  try {
+    await axiosWithAuth.delete(`${BACKEND_URL}/customers/${id}`);
+    return true;
+  } catch (e) {
+    console.error("刪除客戶失敗", e);
+    return false;
+  }
 }

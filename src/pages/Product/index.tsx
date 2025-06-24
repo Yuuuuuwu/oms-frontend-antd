@@ -20,21 +20,9 @@ import {
   batchSetActive,
   changeStock,
   createCategory,
-  type Category,
 } from "../../api/products";
+import type { Product, Category } from "../../types/Product";
 import { SearchOutlined } from "@ant-design/icons";
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  stock: number;
-  desc?: string;
-  image_url?: string;
-  is_active: boolean;
-  created_at?: string;
-  updated_at?: string;
-}
 
 const ProductPage: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -109,6 +97,7 @@ const ProductPage: React.FC = () => {
     setLoading(true);
     try {
       const product = await getProduct(id);
+      if (!product) throw new Error("商品不存在");
       Modal.info({
         title: `商品詳情 - ${product.name}`,
         content: (
@@ -188,6 +177,7 @@ const ProductPage: React.FC = () => {
     }
     try {
       const cat = await createCategory({ name: newCategoryName });
+      if (!cat) throw new Error("新增分類失敗");
       message.success("新增分類成功");
       setCategoryModalOpen(false);
       setNewCategoryName("");

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { notification } from 'antd';
-import axios from 'axios';
+import { axiosWithAuth } from '../../utils/axiosWithAuth';
 
 const PaymentNotification: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -9,7 +9,7 @@ const PaymentNotification: React.FC = () => {
     const fetchNotification = async () => {
       setLoading(true);
       try {
-        const response = await axios.post('/payments/ecpay/callback');
+        const response = await axiosWithAuth.post('/payments/ecpay/callback');
         if (response.data === '1|OK') {
           notification.success({
             message: '付款成功',
@@ -22,6 +22,7 @@ const PaymentNotification: React.FC = () => {
           });
         }
       } catch (error) {
+        console.error('接收付款通知失敗', error);
         notification.error({
           message: '錯誤',
           description: '無法接收付款通知，請檢查網路連線。',

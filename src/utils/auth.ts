@@ -1,43 +1,28 @@
-export type UserRole = "admin" | "seller" | "customer" | "guest";
-
-export interface User {
-  id: number;
-  username: string;
-  email: string;
-  role: UserRole;
-}
+import { axiosWithAuth } from "./axiosWithAuth";
+import { BACKEND_URL } from "./env";
+import type { User } from "../types/User";
 
 const LOCAL_STORAGE_USER_KEY = "oms-user";
 const LOCAL_STORAGE_TOKEN_KEY = "oms-token";
 
 export async function login(email: string, password: string): Promise<boolean> {
   try {
-    const res = await fetch("http://localhost:5000/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+    const res = await axiosWithAuth.post(`${BACKEND_URL}/auth/login`, { email, password });
+    const token: string = res.data.access_token;
+    const meRes = await axiosWithAuth.get(`${BACKEND_URL}/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    if (!res.ok) {
-      return false;
-    }
-    const loginData = await res.json();
-    const token: string = loginData.access_token;
-    const meRes = await fetch("http://localhost:5000/auth/me", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    if (!meRes.ok) {
-      return false;
-    }
-    const meData = await meRes.json();
+    const meData = meRes.data;
     const userInfo: User = {
       id: meData.id,
       username: meData.username,
       email: meData.email,
+      phone: meData.phone,
       role: meData.role,
+      is_active: meData.is_active,
+      created_at: meData.created_at,
+      updated_at: meData.updated_at,
+      last_login: meData.last_login,
     };
     localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(userInfo));
     localStorage.setItem(LOCAL_STORAGE_TOKEN_KEY, token);
@@ -54,38 +39,27 @@ export function logout() {
 }
 
 export async function forgotPassword(email: string): Promise<string | null> {
-  const res = await fetch("http://localhost:5000/auth/forgot-password", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email }),
-  });
-  if (res.ok) {
-    const data = await res.json();
-    return data.reset_token;
+  try {
+    const res = await axiosWithAuth.post(`${BACKEND_URL}/auth/forgot-password`, { email });
+    return res.data.reset_token;
+  } catch {
+    return null;
   }
-  return null;
 }
 
-export async function resetPassword(
-  token: string,
-  newPassword: string
-): Promise<boolean> {
-  const res = await fetch("http://localhost:5000/auth/reset-password", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, new_password: newPassword }),
-  });
-  return res.ok;
+export async function resetPassword(token: string, newPassword: string): Promise<boolean> {
+  try {
+    await axiosWithAuth.post(`${BACKEND_URL}/auth/reset-password`, { token, new_password: newPassword });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function getCurrentUser(): User | null {
   const raw = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
   if (!raw) return null;
   return JSON.parse(raw);
-}
-
-export function getToken(): string | null {
-  return localStorage.getItem(LOCAL_STORAGE_TOKEN_KEY);
 }
 
 export async function register(
@@ -96,12 +70,8 @@ export async function register(
   phone?: string
 ): Promise<boolean> {
   try {
-    const res = await fetch("http://localhost:5000/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, email, password, role, phone }),
-    });
-    return res.status === 201;
+    await axiosWithAuth.post(`${BACKEND_URL}/auth/register`, { username, email, password, role, phone });
+    return true;
   } catch (err) {
     console.error("register 發生錯誤：", err);
     return false;

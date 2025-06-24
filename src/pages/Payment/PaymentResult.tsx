@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { notification, Spin, Button } from "antd";
-import axios from "axios";
+import { axiosWithAuth } from "../../utils/axiosWithAuth";
 
 interface Order {
   id: number;
@@ -53,8 +53,8 @@ const PaymentResult: React.FC = () => {
     }
 
     // 4. 向後端以 order_sn 查訂單資料
-    axios
-      .get<Order>(`/api/orders/sn/${orderSn}`)
+    axiosWithAuth
+      .get<Order>(`/orders/sn/${orderSn}`)
       .then((res) => {
         setOrder(res.data);
         // 5. 三秒後自動跳回訂單詳情
@@ -63,7 +63,8 @@ const PaymentResult: React.FC = () => {
           navigate(`/orders/${res.data.id}`);
         }, 3000);
       })
-      .catch(() => {
+      .catch((e) => {
+        console.error("以訂單編號查詢失敗", e);
         notification.error({
           message: "錯誤",
           description: "無法查詢訂單狀態，請稍後再試。",

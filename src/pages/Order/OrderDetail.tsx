@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, message, Card, Descriptions, Table } from "antd";
-import { getToken } from "../../utils/auth";
-import { fetchWithAuth } from "../../utils/fetchWithAuth";
-import { BACKEND_URL } from '../../utils/env';
+import { axiosWithAuth } from "../../utils/axiosWithAuth";
 
 const OrderDetail: React.FC = () => {
   const { id } = useParams();
@@ -13,11 +11,8 @@ const OrderDetail: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchWithAuth(`${BACKEND_URL}/orders/${id}`, {
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject("取得訂單失敗")))
-      .then(setOrder)
+    axiosWithAuth.get(`/orders/${id}`)
+      .then((res) => setOrder(res.data))
       .catch(() => message.error("取得訂單失敗"))
       .finally(() => setLoading(false));
   }, [id]);
@@ -25,12 +20,9 @@ const OrderDetail: React.FC = () => {
   // 新增：自動刷新訂單歷程
   useEffect(() => {
     const interval = setInterval(() => {
-      fetchWithAuth(`${BACKEND_URL}/orders/${id}`, {
-        headers: { "Content-Type": "application/json" },
-      })
-        .then((res) => (res.ok ? res.json() : null))
-        .then((data) => {
-          if (data) setOrder(data);
+      axiosWithAuth.get(`/orders/${id}`)
+        .then((res) => {
+          if (res.data) setOrder(res.data);
         });
     }, 5000);
     return () => clearInterval(interval);
@@ -39,11 +31,8 @@ const OrderDetail: React.FC = () => {
   const handlePay = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${BACKEND_URL}/payments/ecpay/${id}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      const { ecpay_url, params } = await res.json();
+      const res = await axiosWithAuth.post(`/payments/ecpay/${id}`);
+      const { ecpay_url, params } = res.data;
       const form = document.createElement("form");
       form.method = "POST";
       form.action = ecpay_url;
@@ -56,7 +45,8 @@ const OrderDetail: React.FC = () => {
       });
       document.body.appendChild(form);
       form.submit();
-    } catch {
+    } catch (e) {
+      console.error("產生付款連結失敗", e);
       message.error("產生付款連結失敗");
     } finally {
       setLoading(false);
@@ -79,6 +69,10 @@ const OrderDetail: React.FC = () => {
             return map[order?.status] || order?.status;
           })()
         }</Descriptions.Item>
+        {/* 新增：下單帳號 username */}
+        <Descriptions.Item label="下單帳號">
+          {order?.user?.username || "-"}
+        </Descriptions.Item>
         <Descriptions.Item label="收件人">
           {order?.receiver_name}
         </Descriptions.Item>
