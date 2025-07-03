@@ -46,7 +46,7 @@ const NotificationDropdown: React.FC<Props> = ({
         boxShadow: "0 6px 32px rgba(0,0,0,0.3)",
         padding: 0,
       }}
-      bodyStyle={{ padding: 0 }}
+      styles={{ body: { padding: 0 } }}
       tabList={notificationTabs}
       activeTabKey={tabKey}
       onTabChange={setTabKey}

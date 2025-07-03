@@ -58,7 +58,7 @@ const MainLayout: React.FC<Props> = ({ children }) => {
     user.role && user.role !== "guest" && (
       <Dropdown
         key="notice"
-        dropdownRender={() => (
+        popupRender={() => (
           <NotificationDropdown
             theme={theme}
             notifications={notifications}
@@ -110,7 +110,7 @@ const MainLayout: React.FC<Props> = ({ children }) => {
   ];
 
   // 特定頁面不顯示佈局
-  const hideLayout = ["/", "/login", "/register"];
+  const hideLayout = ["/", "/login", "/register","forgot-password", "/reset-password"];
   if (hideLayout.includes(window.location.pathname)) {
     return <>{children || <Outlet />}</>;
   }

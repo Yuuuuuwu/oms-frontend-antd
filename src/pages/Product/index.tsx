@@ -361,7 +361,7 @@ const ProductPage: React.FC = () => {
             <Select
               allowClear
               placeholder="請選擇分類"
-              dropdownRender={(menu) => (
+              popupRender={(menu) => (
                 <>
                   {menu}
                   <div style={{ display: "flex", padding: 8 }}>
