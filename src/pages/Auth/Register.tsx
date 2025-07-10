@@ -12,39 +12,51 @@ const Register: React.FC = () => {
   const [checkoutForm] = Form.useForm();
 
   const onFinish = async (values: any) => {
-    const success = await register(
-      values.username,
-      values.email,
-      values.password,
-      values.role,
-      values.phone
-    );
-    if (success) {
-      // 註冊成功後自動登入
-      const loginSuccess = await login(values.email, values.password);
-      if (loginSuccess) {
-        // 自動下單流程
-        if (localStorage.getItem("oms-auto-checkout")) {
-          const cartRaw = localStorage.getItem("oms-cart");
-          if (cartRaw) {
-            try {
-              const cart = JSON.parse(cartRaw);
-              if (Array.isArray(cart) && cart.length > 0) {
-                setCheckoutModalVisible(true);
+    console.log("提交註冊表單:", values);
+    
+    try {
+      const success = await register(
+        values.username,
+        values.email,
+        values.password,
+        values.role,
+        values.phone
+      );
+      
+      if (success) {
+        message.success("註冊成功！");
+        
+        // 註冊成功後自動登入
+        const loginSuccess = await login(values.email, values.password);
+        if (loginSuccess) {
+          // 自動下單流程
+          if (localStorage.getItem("oms-auto-checkout")) {
+            const cartRaw = localStorage.getItem("oms-cart");
+            if (cartRaw) {
+              try {
+                const cart = JSON.parse(cartRaw);
+                if (Array.isArray(cart) && cart.length > 0) {
+                  setCheckoutModalVisible(true);
+                }
+              } catch (err) {
+                console.error("Parse cart error:", err);
+                message.error("購物車資料錯誤");
               }
-            } catch (err) {
-              console.error("Parse cart error:", err);
-              message.error("購物車資料錯誤");
             }
+          } else {
+            message.success("註冊並登入成功，歡迎！");
+            navigate("/shop");
           }
         } else {
-          message.success("註冊並登入成功，歡迎！");
-          navigate("/shop");
+          message.error("自動登入失敗，請手動登入");
+          navigate("/login");
         }
       } else {
-        message.error("自動登入失敗，請手動登入");
-        navigate("/login");
+        message.error("註冊失敗，請檢查輸入資料或查看控制台錯誤訊息");
       }
+    } catch (error) {
+      console.error("註冊流程錯誤:", error);
+      message.error("註冊過程中發生錯誤");
     }
   };
 
@@ -84,6 +96,9 @@ const Register: React.FC = () => {
           </Form.Item>
           <Form.Item label="密碼" name="password" rules={[{ required: true, message: "請輸入密碼" }]}>
             <Input.Password />
+          </Form.Item>
+          <Form.Item label="電話" name="phone" rules={[{ pattern: /^[0-9-+()]*$/, message: "請輸入有效電話號碼" }]}>
+            <Input placeholder="選填" />
           </Form.Item>
           <Form.Item label="角色" name="role" rules={[{ required: true, message: "請選擇角色" }]}>
             <Select placeholder="請選擇角色">
