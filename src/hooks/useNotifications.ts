@@ -1,3 +1,4 @@
+//src/hooks/useNotifications.ts
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import { axiosWithAuth } from "../utils/axiosWithAuth";
@@ -10,8 +11,9 @@ export function useNotifications(user: any) {
   const fetchNotifications = async () => {
     try {
       const res = await axiosWithAuth.get("/notifications");
+      const notList = Array.isArray(res.data.data) ? res.data.data : [];
       setNotifications(
-        res.data.map((n: any) => ({
+        notList.map((n: any) => ({
           ...n,
           time: dayjs(n.created_at),
           read: n.is_read,
