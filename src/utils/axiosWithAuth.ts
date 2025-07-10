@@ -24,7 +24,7 @@ axiosWithAuth.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401) {
-      message.error("登入已過期，請重新登入");
+      message.error("登入認證已過期，請重新登入");
       localStorage.removeItem("oms-user");
       localStorage.removeItem("oms-token");
       window.location.href = "/login";
