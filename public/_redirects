@@ -5,7 +5,8 @@
 /*    /index.html   200
 
 # API routes should not be redirected (if using same domain)
-/api/*  https://your-backend-service.onrender.com/api/:splat  200
+# /api/*  https://your-backend-service.onrender.com/api/:splat  200
+# Note: 如果前後端使用不同域名，則不需要此重定向規則
 
 # Specific redirects for common routes (optional)
 /login    /index.html   200
