@@ -1,3 +1,4 @@
+///src/pages/Dashboard/index.tsx
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Statistic, Button, message } from "antd";
 import { Bar } from "@ant-design/charts";
@@ -128,7 +129,8 @@ const Dashboard: React.FC = () => {
               <ul style={{ paddingLeft: 16 }}>
                 <li>本月新訂單：<b>{summary.order_count}</b></li>
                 <li>本月新客戶：<b>{summary.customer_count}</b></li>
-                <li>本月營收：<b>${summary.total_sales}</b></li>
+                <li>本月營收：<b>${summary.total_sales.toLocaleString()}</b></li>
+                <li>平均訂單金額：<b>${(summary.total_sales / summary.order_count).toLocaleString()}</b></li>
                 {/* 若後端有其他欄位就再加上去 */}
               </ul>
             )}

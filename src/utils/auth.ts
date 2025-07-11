@@ -69,10 +69,25 @@ export async function register(
   phone?: string
 ): Promise<boolean> {
   try {
-    await axiosWithAuth.post(`/auth/register`, { username, email, password, role, phone });
+    const payload: any = { username, email, password, role };
+    if (phone && phone.trim()) {
+      payload.phone = phone.trim();
+    }
+    
+    const response = await axiosWithAuth.post(`/auth/register`, payload);
+    console.log("註冊成功:", response.data);
     return true;
-  } catch (err) {
+  } catch (err: any) {
     console.error("register 發生錯誤：", err);
+    
+    // 提供更詳細的錯誤訊息
+    if (err.response?.data?.description) {
+      console.error("伺服器錯誤:", err.response.data.description);
+    }
+    if (err.response?.data?.errors) {
+      console.error("驗證錯誤:", err.response.data.errors);
+    }
+    
     return false;
   }
 }

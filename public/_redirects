@@ -1,0 +1,15 @@
+# Redirects for Render static site hosting
+# This enables client-side routing for React SPA
+
+# Handle all routes by serving index.html (SPA fallback)
+/*    /index.html   200
+
+# API routes should not be redirected (if using same domain)
+/api/*  https://your-backend-service.onrender.com/api/:splat  200
+
+# Specific redirects for common routes (optional)
+/login    /index.html   200
+/register /index.html   200
+/dashboard /index.html  200
+/products /index.html   200
+/orders   /index.html   200
