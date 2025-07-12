@@ -9,6 +9,8 @@
 
 ### 目前此前端已部署到Render雲端平台，可透過下方測試帳號進行測試。
 
+此為免費方案部署，速度較慢，若有loading較久的情況，請稍後再嘗試，謝謝。
+
 網址:https://oms-frontend-ixkl.onrender.com
 
 ### 預設測試帳號
