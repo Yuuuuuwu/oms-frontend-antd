@@ -136,14 +136,16 @@ const CartPage: React.FC = () => {
         remark: values.remark,
         items: cart.map(item => ({ product_id: item.id, qty: item.qty })),
       });
-      message.success("訂單建立成功");
+      message.success("訂單建立成功！即將跳轉到訂單頁面...");
       setCart([]);
       localStorage.removeItem("oms-cart");
       setCheckoutOpen(false);
       form.resetFields();
-      // 新增：下單後自動刷新商品庫存
-      window.location.reload();
-      navigate(`/orders/${order.id}`);
+      
+      // 延遲跳轉讓用戶看到成功訊息
+      setTimeout(() => {
+        navigate('/orders');
+      }, 1500);
     } catch (e: any) {
       message.error(e.message || "下單失敗");
     } finally {
