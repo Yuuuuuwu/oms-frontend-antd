@@ -9,9 +9,13 @@
 
 ### 目前此前端已部署到Render雲端平台，可透過下方測試帳號進行測試。
 
-此為免費方案部署，速度較慢，若有loading較久的情況，請稍後再嘗試，謝謝。
+此為免費方案部署，伺服器會有閒置模式，初次開啟需要等伺服器啟動，若有loading情況請耐心等候，謝謝。
 
-網址:https://oms-frontend-ixkl.onrender.com
+後端網址:https://oms-backend-d0yc.onrender.com
+
+請先開啟後端網址，待後端啟動後顯示Hello, Order Management System，即可開啟下方前端網頁進行測試。
+
+前端網址:https://oms-frontend-ixkl.onrender.com
 
 ### 預設測試帳號
 
