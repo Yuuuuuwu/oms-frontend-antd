@@ -127,7 +127,11 @@ const MainLayout: React.FC<Props> = ({ children }) => {
       splitMenus={false}
       navTheme={navTheme}
       route={{ routes: menuData }}
-      menuItemRender={(item, dom) => <a href={item.path}>{dom}</a>}
+      menuItemRender={(item, dom) => (
+        <div onClick={() => navigate(item.path || '/')} style={{ cursor: 'pointer' }}>
+          {dom}
+        </div>
+      )}
       token={theme === "dark" ? darkToken : lightToken}
       actionsRender={() => actions}
     >

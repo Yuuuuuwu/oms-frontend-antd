@@ -18,7 +18,11 @@ const NotificationPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetchNotifications();
-      if (Array.isArray(res)) {
+      // 處理新的 API 返回格式 {data: [...]}
+      if (res && res.data && Array.isArray(res.data)) {
+        setNotifications(res.data);
+      } else if (Array.isArray(res)) {
+        // 向後兼容，如果直接返回數組
         setNotifications(res);
       } else {
         setNotifications([]);

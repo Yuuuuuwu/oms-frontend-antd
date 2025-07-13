@@ -70,23 +70,23 @@ const AppInner: React.FC = () => {
                   <Route path="shop/:id" element={<ProductDetail />} />
                   <Route path="dashboard" element={<Dashboard />} />
                   <Route path="cart" element={<CartPage />} />
-                  <Route path="orders" element={<OrderPage />} />
-                  <Route path="users" element={<Userpage />} />
-                  <Route path="payments" element={<PaymentPage />} />
+                  <Route path="orders" element={<RequireAuth><OrderPage /></RequireAuth>} />
+                  <Route path="users" element={<RequireAuth><Userpage /></RequireAuth>} />
+                  <Route path="payments" element={<RequireAuth><PaymentPage /></RequireAuth>} />
                   <Route path="payments/payment_result" element={<PaymentResult />} />
-                  <Route path="orders/:id" element={<OrderDetail />} />
-                  <Route path="orders/:id/edit" element={<OrderEdit />} />
-                  <Route path="orders/new" element={<OrderEdit />} />
-                  <Route path="products" element={<ProductPage />} />
-                  <Route path="customers" element={<CustomerPage />} />
-                  <Route path="profile" element={<Profile />} />
+                  <Route path="orders/:id" element={<RequireAuth><OrderDetail /></RequireAuth>} />
+                  <Route path="orders/:id/edit" element={<RequireAuth><OrderEdit /></RequireAuth>} />
+                  <Route path="orders/new" element={<RequireAuth><OrderEdit /></RequireAuth>} />
+                  <Route path="products" element={<RequireAuth><ProductPage /></RequireAuth>} />
+                  <Route path="customers" element={<RequireAuth><CustomerPage /></RequireAuth>} />
+                  <Route path="profile" element={<RequireAuth><Profile /></RequireAuth>} />
                   <Route path="checkout/preview" element={<CheckoutPreview />} />
                   <Route path="checkout/process" element={<CheckoutProcess />} />
                   <Route path="payment-notification" element={<PaymentNotification />} />
-                  <Route path="notifications" element={<NotificationsPage />} />
-                  <Route path="report" element={<ReportPage />} />
-                  <Route path="products/category-manager" element={<CategoryManagerPage />} />
-                  <Route path="orders/create" element={<OrderCreatePage />} />
+                  <Route path="notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
+                  <Route path="report" element={<RequireAuth><ReportPage /></RequireAuth>} />
+                  <Route path="products/category-manager" element={<RequireAuth><CategoryManagerPage /></RequireAuth>} />
+                  <Route path="orders/create" element={<RequireAuth><OrderCreatePage /></RequireAuth>} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </MainLayout>

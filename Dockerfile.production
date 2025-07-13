@@ -1,4 +1,4 @@
-# 前端 Dockerfile - 多階段構建 (用於 Docker 本地開發)
+# 生產環境 Dockerfile - 多階段構建 (用於 Render 部署)
 # 第一階段：構建階段
 FROM node:18-alpine AS builder
 
@@ -15,8 +15,8 @@ RUN npm ci
 COPY . .
 
 # 設定建置時環境變數
-ARG VITE_BACKEND_URL=http://localhost:5001
-ARG VITE_FRONTEND_URL=http://localhost:3002
+ARG VITE_BACKEND_URL=https://your-backend-name.onrender.com
+ARG VITE_FRONTEND_URL=https://your-frontend-name.onrender.com
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 ENV VITE_FRONTEND_URL=$VITE_FRONTEND_URL
 
@@ -26,8 +26,8 @@ RUN npm run build
 # 第二階段：生產階段
 FROM nginx:alpine
 
-# 複製 Docker 專用 nginx 配置
-COPY nginx.docker.conf /etc/nginx/nginx.conf
+# 複製 Render 專用 nginx 配置
+COPY nginx.render.conf /etc/nginx/nginx.conf
 
 # 複製構建結果到 nginx 目錄
 COPY --from=builder /app/dist /usr/share/nginx/html

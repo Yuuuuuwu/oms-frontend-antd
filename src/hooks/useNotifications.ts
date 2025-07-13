@@ -35,7 +35,7 @@ export function useNotifications(user: any) {
   const handleRead = async (id: number, link?: string, navigate?: (path: string) => void) => {
     try {
       await axiosWithAuth.post(`/notifications/${id}/read`);
-      setNotifications((nots) => nots.map((n) => (n.id === id ? { ...n, read: true } : n)));
+      setNotifications((nots) => nots.map((n) => (n.id === id ? { ...n, is_read: true, read: true } : n)));
       if (link && navigate) navigate(link);
     } catch (e) {
       console.error("標記通知為已讀失敗", e);
@@ -50,7 +50,7 @@ export function useNotifications(user: any) {
           .filter((n) => !n.is_read)
           .map((n) => axiosWithAuth.post(`/notifications/${n.id}/read`))
       );
-      setNotifications((nots) => nots.map((n) => ({ ...n, is_read: true })));
+      setNotifications((nots) => nots.map((n) => ({ ...n, is_read: true, read: true })));
     } catch (e) {
       console.error("全部標為已讀失敗", e);
     }
