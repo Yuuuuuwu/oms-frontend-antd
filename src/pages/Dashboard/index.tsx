@@ -441,14 +441,6 @@ const Dashboard: React.FC = () => {
                     >
                       管理客戶資料 →
                     </Button>
-                    <Button 
-                      type="link" 
-                      size="small" 
-                      style={{ padding: 0, height: 'auto', color: '#1890ff' }}
-                      href="/reports"
-                    
-                    
-                    </Button>
                   </Space>
                 </div>
               </Space>
