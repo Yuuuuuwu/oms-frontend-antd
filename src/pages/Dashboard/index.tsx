@@ -93,14 +93,16 @@ const Dashboard: React.FC = () => {
             {barData.length > 0 ? (
               <Bar
                 data={barData}
-                xField="value"
-                yField="month"
+                xField="month"
+                yField="value"
                 height={260}
                 xAxis={{
-                  label: { style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } },
+                  label: { 
+                    style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 },
+                    rotate: -45 // 傾斜月份標籤避免重疊
+                  },
                   line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
                   tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
-                  grid: { line: { style: { stroke: theme === "dark" ? "#31343f" : "#eee", lineDash: [4,4] } } },
                 }}
                 yAxis={{
                   label: { 
@@ -108,11 +110,13 @@ const Dashboard: React.FC = () => {
                   },
                   line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
                   tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
+                  grid: { line: { style: { stroke: theme === "dark" ? "#31343f" : "#eee", lineDash: [4,4] } } },
                 }}
                 label={{ 
                   style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 },
                   formatter: (value) => `$${value.toLocaleString()}` // 格式化金額顯示
                 }}
+                color="#177ddc"
               />
             ) : (
               <div style={{ textAlign: "center", color: "#aaa", padding: 48 }}>
