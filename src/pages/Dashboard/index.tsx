@@ -446,8 +446,8 @@ const Dashboard: React.FC = () => {
                       size="small" 
                       style={{ padding: 0, height: 'auto', color: '#1890ff' }}
                       href="/reports"
-                    >
-                      詳細銷售報表 →
+                    
+                    
                     </Button>
                   </Space>
                 </div>
