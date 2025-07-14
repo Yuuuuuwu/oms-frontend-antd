@@ -93,15 +93,16 @@ const Dashboard: React.FC = () => {
             {barData.length > 0 ? (
               <Bar
                 data={barData}
-                xField="value"
-                yField="month"
+                xField="month"
+                yField="value"
                 height={260}
-                // 以下略：色彩、格線、字體樣式可保留原本邏輯
                 xAxis={{
-                  label: { style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } },
+                  label: { 
+                    style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 },
+                    rotate: -45 // 傾斜月份標籤避免重疊
+                  },
                   line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
                   tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
-                  grid: { line: { style: { stroke: theme === "dark" ? "#31343f" : "#eee", lineDash: [4,4] } } },
                 }}
                 yAxis={{
                   label: { style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } },
@@ -109,7 +110,10 @@ const Dashboard: React.FC = () => {
                   tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
                   grid: { line: { style: { stroke: theme === "dark" ? "#31343f" : "#eee", lineDash: [4,4] } } },
                 }}
-                label={{ style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } }}
+                label={{ 
+                  style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 },
+                  formatter: (value) => `$${value.toLocaleString()}` // 格式化金額顯示
+                }}
               />
             ) : (
               <div style={{ textAlign: "center", color: "#aaa", padding: 48 }}>
@@ -130,7 +134,7 @@ const Dashboard: React.FC = () => {
                 <li>本月新訂單：<b>{summary.order_count}</b></li>
                 <li>本月新客戶：<b>{summary.customer_count}</b></li>
                 <li>本月營收：<b>${summary.total_sales.toLocaleString()}</b></li>
-                <li>平均訂單金額：<b>${(summary.total_sales / summary.order_count).toLocaleString()}</b></li>
+                <li>平均訂單金額：<b>${summary.order_count > 0 ? (summary.total_sales / summary.order_count).toLocaleString() : '0'}</b></li>
                 {/* 若後端有其他欄位就再加上去 */}
               </ul>
             )}
