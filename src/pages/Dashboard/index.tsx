@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Row, Statistic, Button, message, Space, Typography } from "antd";
 import { Line, Column, Area } from "@ant-design/charts";
-import { PlusOutlined, DownloadOutlined, TrendingUpOutlined, BarChartOutlined } from "@ant-design/icons";
+import { PlusOutlined, DownloadOutlined, LineChartOutlined, BarChartOutlined } from "@ant-design/icons";
 import { useThemeLang } from "../../contexts/ThemeLangContext";
 import { axiosWithAuth } from "../../utils/axiosWithAuth";
 
@@ -107,7 +107,7 @@ const Dashboard: React.FC = () => {
           <Card 
             title={
               <Space>
-                <TrendingUpOutlined />
+                <LineChartOutlined />
                 <Title level={4} style={{ margin: 0 }}>月度銷售趨勢</Title>
               </Space>
             }
@@ -313,7 +313,7 @@ const Dashboard: React.FC = () => {
                 borderRadius: 8,
                 border: `1px dashed ${theme === "dark" ? "#434343" : "#d9d9d9"}`
               }}>
-                <TrendingUpOutlined style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }} />
+                <LineChartOutlined style={{ fontSize: 48, marginBottom: 16, opacity: 0.3 }} />
                 <div>暫無銷售數據</div>
                 <Text type="secondary" style={{ fontSize: 12 }}>
                   數據載入中或暫無銷售記錄
