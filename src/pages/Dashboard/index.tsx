@@ -93,22 +93,21 @@ const Dashboard: React.FC = () => {
             {barData.length > 0 ? (
               <Bar
                 data={barData}
-                xField="month"
-                yField="value"
+                xField="value"
+                yField="month"
                 height={260}
                 xAxis={{
-                  label: { 
-                    style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 },
-                    rotate: -45 // 傾斜月份標籤避免重疊
-                  },
-                  line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
-                  tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
-                }}
-                yAxis={{
                   label: { style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 } },
                   line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
                   tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
                   grid: { line: { style: { stroke: theme === "dark" ? "#31343f" : "#eee", lineDash: [4,4] } } },
+                }}
+                yAxis={{
+                  label: { 
+                    style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 }
+                  },
+                  line: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
+                  tickLine: { style: { stroke: theme === "dark" ? "#555" : "#ccc", lineWidth: 1.5 } },
                 }}
                 label={{ 
                   style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontWeight: 600 },
