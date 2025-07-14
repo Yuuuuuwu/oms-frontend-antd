@@ -18,11 +18,107 @@ const NotificationPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetchNotifications();
-      if (Array.isArray(res)) {
-        setNotifications(res);
-      } else {
-        setNotifications([]);
-      }
+      let apiNotifications = Array.isArray(res) ? res : [];
+      
+      // 訂單管理系統假數據通知（完整版）
+      const fakeNotifications = [
+        {
+          id: 9001,
+          title: "新訂單提醒",
+          content: "客戶張小明提交了新訂單 #ORD-2025-001，總金額 $1,250",
+          type: "order",
+          is_read: false,
+          created_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5分鐘前
+          user_id: null
+        },
+        {
+          id: 9002,
+          title: "庫存不足警告",
+          content: "商品「iPhone 15 Pro」庫存僅剩 3 件，建議及時補貨",
+          type: "system",
+          is_read: false,
+          created_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(), // 1小時前
+          user_id: null
+        },
+        {
+          id: 9003,
+          title: "付款確認",
+          content: "訂單 #ORD-2025-002 已收到付款，金額 $2,850",
+          type: "order",
+          is_read: true,
+          created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2小時前
+          user_id: null
+        },
+        {
+          id: 9004,
+          title: "訂單狀態更新",
+          content: "訂單 #ORD-2024-998 已出貨，預計明日送達客戶",
+          type: "order",
+          is_read: false,
+          created_at: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4小時前
+          user_id: null
+        },
+        {
+          id: 9005,
+          title: "客戶服務請求",
+          content: "客戶李大華對訂單 #ORD-2024-995 提出退貨申請",
+          type: "customer",
+          is_read: true,
+          created_at: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6小時前
+          user_id: null
+        },
+        {
+          id: 9006,
+          title: "每日銷售報告",
+          content: "今日完成 15 筆訂單，總銷售額 $45,200，較昨日增長 12%",
+          type: "system",
+          is_read: false,
+          created_at: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), // 8小時前
+          user_id: null
+        },
+        {
+          id: 9007,
+          title: "促銷活動提醒",
+          content: "春季促銷活動將於明日結束，目前參與訂單 89 筆",
+          type: "system",
+          is_read: true,
+          created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1天前
+          user_id: null
+        },
+        {
+          id: 9008,
+          title: "異常訂單警報",
+          content: "訂單 #ORD-2025-003 金額異常高（$15,000），請人工審核",
+          type: "order",
+          is_read: false,
+          created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1天前
+          user_id: null
+        },
+        {
+          id: 9009,
+          title: "新客戶註冊",
+          content: "新客戶「王小美」已完成註冊，等級：一般會員",
+          type: "customer",
+          is_read: false,
+          created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2天前
+          user_id: null
+        },
+        {
+          id: 9010,
+          title: "月度業績達標",
+          content: "恭喜！本月銷售額已達標，目前完成率 105%",
+          type: "system",
+          is_read: true,
+          created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3天前
+          user_id: null
+        }
+      ];
+
+      // 合併並按時間排序（最新的在前）
+      const allNotifications = [...apiNotifications, ...fakeNotifications]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      
+      setNotifications(allNotifications);
     } catch {
       message.error("無法載入通知");
     } finally {
