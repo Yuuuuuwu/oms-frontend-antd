@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, InputNumber, message, Card, Form, Input, Modal } from "antd";
+import {
+  Table,
+  Button,
+  InputNumber,
+  message,
+  Card,
+  Form,
+  Input,
+  Modal,
+} from "antd";
 import { createOrder } from "../../api/orders";
 import { useNavigate } from "react-router-dom";
 import { getProducts } from "../../api/products";
@@ -34,7 +43,7 @@ const CartPage: React.FC = () => {
       } catch {}
 
       const cartFull: CartItem[] = cartArr
-        .map(item => {
+        .map((item) => {
           const prod = productsRes.data.find((p: any) => p.id === item.id);
           if (!prod) return undefined;
           return {
@@ -43,7 +52,7 @@ const CartPage: React.FC = () => {
             price: prod.price,
             qty: item.qty,
             stock: prod.stock,
-            image_url: prod.image_url
+            image_url: prod.image_url,
           } as CartItem;
         })
         .filter((x): x is CartItem => !!x);
@@ -76,7 +85,10 @@ const CartPage: React.FC = () => {
     });
   };
 
-  const total = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.qty, 0);
+  const total = cart.reduce(
+    (sum: number, item: CartItem) => sum + item.price * item.qty,
+    0
+  );
 
   const columns = [
     {
@@ -84,7 +96,13 @@ const CartPage: React.FC = () => {
       dataIndex: "name",
       render: (_: any, record: CartItem) => (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {record.image_url && <img src={record.image_url} style={{ width: 40 }} alt={record.name} />}
+          {record.image_url && (
+            <img
+              src={record.image_url}
+              style={{ width: 40 }}
+              alt={record.name}
+            />
+          )}
           <span>{record.name}</span>
         </div>
       ),
@@ -134,17 +152,28 @@ const CartPage: React.FC = () => {
         receiver_phone: values.receiver_phone,
         shipping_address: values.shipping_address,
         remark: values.remark,
-        items: cart.map(item => ({ product_id: item.id, qty: item.qty })),
+        items: cart.map((item) => ({ product_id: item.id, qty: item.qty })),
       });
       message.success("訂單建立成功！即將跳轉到訂單頁面...");
       setCart([]);
       localStorage.removeItem("oms-cart");
       setCheckoutOpen(false);
       form.resetFields();
-      
-      // 延遲跳轉讓用戶看到成功訊息
+
       setTimeout(() => {
-        navigate('/orders');
+        const user = getCurrentUser();
+        if (!user || user.role === "guest") {
+          // 訪客下單後跳轉到註冊頁面
+          navigate("/register", {
+            state: {
+              message: "下單成功！請註冊帳號以查看訂單詳情",
+              fromOrder: true,
+            },
+          });
+        } else {
+          // 已登入用戶（賣家/管理員）跳轉到訂單頁面
+          navigate("/orders");
+        }
       }, 1500);
     } catch (e: any) {
       message.error(e.message || "下單失敗");
@@ -165,7 +194,7 @@ const CartPage: React.FC = () => {
         <b>總金額：${total}</b>
         <Button
           type="primary"
-          onClick={() => setCheckoutOpen(true)}
+          onClick={handleCheckout}
           disabled={cart.length === 0}
           style={{ marginLeft: 16 }}
         >
