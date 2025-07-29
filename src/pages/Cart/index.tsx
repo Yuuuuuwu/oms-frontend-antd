@@ -137,8 +137,11 @@ const CartPage: React.FC = () => {
   const handleCheckout = () => {
     const user = getCurrentUser();
     if (!user || user.role === "guest") {
-      localStorage.setItem("oms-auto-checkout", "1");
-      navigate("/register");
+      message.info("訪客模式無法結帳，將跳轉到註冊帳號頁面");
+      setTimeout(() => {
+        localStorage.setItem("oms-auto-checkout", "1");
+        navigate("/register");
+      }, 1000);
       return;
     }
     setCheckoutOpen(true);
