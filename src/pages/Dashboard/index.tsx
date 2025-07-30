@@ -57,12 +57,14 @@ const Dashboard: React.FC = () => {
       {/* ===== 快速操作區 ===== */}
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col>
-          <Button type="primary" icon={<PlusOutlined />} href="/order/create">
+          <Button type="primary" icon={<PlusOutlined />} href="/orders/create">
             新增訂單
           </Button>
         </Col>
         <Col>
-          <Button icon={<DownloadOutlined />}>下載報表</Button>
+          <Button icon={<DownloadOutlined />} href="/report">
+            查看報表
+          </Button>
         </Col>
       </Row>
 

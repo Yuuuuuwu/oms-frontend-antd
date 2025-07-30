@@ -29,6 +29,7 @@ import NotificationsPage from "./pages/Notifications";
 import ReportPage from "./pages/Report";
 import CategoryManagerPage from "./pages/Product/CategoryManager";
 import OrderCreatePage from "./pages/Order/OrderCreate";
+import RoleProtectedRoute from "./components/RoleProtectedRoute";
 
 // 登入驗證元件
 function RequireAuth({ children }: { children: React.ReactNode }) {
@@ -41,13 +42,30 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 
 // 全域主題/語言自動套用 ConfigProvider
 const AppInner: React.FC = () => {
-  const { lang, locales } = useThemeLang();
+  const { theme, lang, locales } = useThemeLang();
 
   const antdThemeConfig = {
+    algorithm: theme === "dark" ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
     token: {
       colorPrimary: "#1890ff",
-      colorBgContainer: "#ffffff",
-      colorText: "#000000",
+      // 動態主題配置
+      ...(theme === "dark" ? {
+        colorBgContainer: "#1f1f1f",
+        colorBgElevated: "#262626",
+        colorBgLayout: "#141414",
+        colorText: "#ffffff",
+        colorTextSecondary: "#a6a6a6",
+        colorBorder: "#434343",
+        colorBorderSecondary: "#303030",
+      } : {
+        colorBgContainer: "#ffffff",
+        colorBgElevated: "#ffffff", 
+        colorBgLayout: "#f5f5f5",
+        colorText: "#000000",
+        colorTextSecondary: "#666666",
+        colorBorder: "#d9d9d9",
+        colorBorderSecondary: "#f0f0f0",
+      })
     },
   };
 
@@ -68,17 +86,45 @@ const AppInner: React.FC = () => {
                   <Route path="reset-password" element={<ResetPassword />} />
                   <Route path="shop" element={<ShopPage />} />
                   <Route path="shop/:id" element={<ProductDetail />} />
-                  <Route path="dashboard" element={<Dashboard />} />
+                  <Route 
+                    path="dashboard" 
+                    element={
+                      <RoleProtectedRoute allowedRoles={['admin', 'seller']}>
+                        <Dashboard />
+                      </RoleProtectedRoute>
+                    } 
+                  />
                   <Route path="cart" element={<CartPage />} />
                   <Route path="orders" element={<OrderPage />} />
-                  <Route path="users" element={<Userpage />} />
+                  <Route 
+                    path="users" 
+                    element={
+                      <RoleProtectedRoute allowedRoles={['admin']}>
+                        <Userpage />
+                      </RoleProtectedRoute>
+                    } 
+                  />
                   <Route path="payments" element={<PaymentPage />} />
                   <Route path="payments/payment_result" element={<PaymentResult />} />
                   <Route path="orders/:id" element={<OrderDetail />} />
                   <Route path="orders/:id/edit" element={<OrderEdit />} />
                   <Route path="orders/new" element={<OrderEdit />} />
-                  <Route path="products" element={<ProductPage />} />
-                  <Route path="customers" element={<CustomerPage />} />
+                  <Route 
+                    path="products" 
+                    element={
+                      <RoleProtectedRoute allowedRoles={['admin', 'seller']}>
+                        <ProductPage />
+                      </RoleProtectedRoute>
+                    } 
+                  />
+                  <Route 
+                    path="customers" 
+                    element={
+                      <RoleProtectedRoute allowedRoles={['admin', 'seller']}>
+                        <CustomerPage />
+                      </RoleProtectedRoute>
+                    } 
+                  />
                   <Route path="profile" element={<Profile />} />
                   <Route path="checkout/preview" element={<CheckoutPreview />} />
                   <Route path="checkout/process" element={<CheckoutProcess />} />
