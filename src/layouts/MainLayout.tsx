@@ -49,8 +49,14 @@ const MainLayout: React.FC<Props> = ({ children }) => {
     // 主題切換
     <BulbOutlined
       key="theme"
-      style={{ fontSize: 20, marginRight: 20, cursor: "pointer" }}
-      title="切換主題"
+      className="theme-switch"
+      style={{ 
+        fontSize: 20, 
+        marginRight: 20, 
+        cursor: "pointer",
+        color: theme === "dark" ? "#fadb14" : "#595959"
+      }}
+      title={theme === "dark" ? "切換到淺色模式" : "切換到深色模式"}
       onClick={() => setTheme(theme === "light" ? "dark" : "light")}
     />,
 
@@ -119,22 +125,24 @@ const MainLayout: React.FC<Props> = ({ children }) => {
   const menuData = getMenuData(user);
 
   return (
-    <ProLayout
-      title="訂單管理系統"
-      logo="logo.png"
-      fixSiderbar
-      layout="mix"
-      splitMenus={false}
-      navTheme={navTheme}
-      route={{ routes: menuData }}
-      menuItemRender={(item, dom) => <a href={item.path}>{dom}</a>}
-      token={theme === "dark" ? darkToken : lightToken}
-      actionsRender={() => actions}
-    >
-      <PageContainer>
-        {children || <Outlet />}
-      </PageContainer>
-    </ProLayout>
+    <div data-theme={theme}>
+      <ProLayout
+        title="訂單管理系統"
+        logo="logo.png"
+        fixSiderbar
+        layout="mix"
+        splitMenus={false}
+        navTheme={navTheme}
+        route={{ routes: menuData }}
+        menuItemRender={(item, dom) => <a href={item.path}>{dom}</a>}
+        token={theme === "dark" ? darkToken : lightToken}
+        actionsRender={() => actions}
+      >
+        <PageContainer>
+          {children || <Outlet />}
+        </PageContainer>
+      </ProLayout>
+    </div>
   );
 };
 

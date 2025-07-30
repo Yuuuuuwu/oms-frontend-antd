@@ -1,0 +1,69 @@
+/* App.css - hﬂ;L# */
+
+/* hﬂ#Õn */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* ˙r;L */
+[data-theme="light"] {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --border-color: #d9d9d9;
+  --hover-bg: #f5f5f5;
+}
+
+/* Òr;L */
+[data-theme="dark"] {
+  --bg-color: #141414;
+  --text-color: #ffffff;
+  --border-color: #434343;
+  --hover-bg: #262626;
+}
+
+/* ;L€	# */
+.theme-switch {
+  color: var(--text-color);
+  transition: color 0.3s;
+}
+
+.theme-switch:hover {
+  color: #1890ff;
+}
+
+/* ˛’ù# */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--hover-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1890ff;
+}
+
+/* ˇ…- */
+@media (max-width: 768px) {
+  .ant-layout-sider {
+    position: fixed !important;
+    z-index: 1000;
+  }
+}
