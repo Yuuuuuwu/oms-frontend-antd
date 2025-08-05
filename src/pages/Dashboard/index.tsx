@@ -57,12 +57,9 @@ const Dashboard: React.FC = () => {
       {/* ===== 快速操作區 ===== */}
       <Row gutter={16} style={{ marginBottom: 16 }}>
         <Col>
-          <Button type="primary" icon={<PlusOutlined />} href="/order/create">
-            新增訂單
+          <Button icon={<DownloadOutlined />} href="/report">
+            查看報表
           </Button>
-        </Col>
-        <Col>
-          <Button icon={<DownloadOutlined />}>下載報表</Button>
         </Col>
       </Row>
 
@@ -155,21 +152,21 @@ const Dashboard: React.FC = () => {
                     }}
                     xAxis={{
                       label: { 
-                        style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontSize: 11 },
+                        style: { fill: theme === "dark" ? "#ffffff" : "#222", fontSize: 12, fontWeight: 500 },
                         rotate: -30
                       },
-                      line: { style: { stroke: theme === "dark" ? "#434343" : "#e8e8e8" } },
-                      tickLine: { style: { stroke: theme === "dark" ? "#434343" : "#e8e8e8" } },
+                      line: { style: { stroke: theme === "dark" ? "#595959" : "#e8e8e8" } },
+                      tickLine: { style: { stroke: theme === "dark" ? "#595959" : "#e8e8e8" } },
                     }}
                     yAxis={{
                       label: { 
-                        style: { fill: theme === "dark" ? "#f7fafc" : "#666", fontSize: 11 },
+                        style: { fill: theme === "dark" ? "#ffffff" : "#666", fontSize: 12, fontWeight: 500 },
                         formatter: (value) => `$${(value / 1000).toFixed(0)}K`
                       },
                       grid: { 
                         line: { 
                           style: { 
-                            stroke: theme === "dark" ? "#303030" : "#f0f0f0", 
+                            stroke: theme === "dark" ? "#434343" : "#f0f0f0", 
                             lineDash: [4, 4] 
                           } 
                         } 
@@ -183,9 +180,9 @@ const Dashboard: React.FC = () => {
                     }}
                     label={{
                       style: {
-                        fill: theme === "dark" ? "#fff" : "#000",
-                        fontSize: 10,
-                        fontWeight: 500,
+                        fill: theme === "dark" ? "#ffffff" : "#000",
+                        fontSize: 11,
+                        fontWeight: 600,
                       },
                       formatter: (value) => `$${(value / 1000).toFixed(0)}K`
                     }}
@@ -218,20 +215,20 @@ const Dashboard: React.FC = () => {
                     }}
                     xAxis={{
                       label: { 
-                        style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontSize: 11 },
+                        style: { fill: theme === "dark" ? "#ffffff" : "#222", fontSize: 12, fontWeight: 500 },
                         rotate: -30
                       },
-                      line: { style: { stroke: theme === "dark" ? "#434343" : "#e8e8e8" } },
+                      line: { style: { stroke: theme === "dark" ? "#595959" : "#e8e8e8" } },
                     }}
                     yAxis={{
                       label: { 
-                        style: { fill: theme === "dark" ? "#f7fafc" : "#666", fontSize: 11 },
+                        style: { fill: theme === "dark" ? "#ffffff" : "#666", fontSize: 12, fontWeight: 500 },
                         formatter: (value) => `$${(value / 1000).toFixed(0)}K`
                       },
                       grid: { 
                         line: { 
                           style: { 
-                            stroke: theme === "dark" ? "#303030" : "#f0f0f0", 
+                            stroke: theme === "dark" ? "#434343" : "#f0f0f0", 
                             lineDash: [4, 4] 
                           } 
                         } 
@@ -259,7 +256,7 @@ const Dashboard: React.FC = () => {
                     yField="value"
                     height={300}
                     areaStyle={{
-                      fill: `l(270) 0:${theme === "dark" ? "#1890ff" : "#177ddc"} 0.5:${theme === "dark" ? "#40a9ff" : "#69c0ff"} 1:#ffffff`,
+                      fill: `l(270) 0:${theme === "dark" ? "#1890ff" : "#177ddc"} 0.5:${theme === "dark" ? "#40a9ff" : "#69c0ff"} 1:${theme === "dark" ? "#141414" : "#ffffff"}`,
                       fillOpacity: 0.6,
                     }}
                     line={{
@@ -270,20 +267,20 @@ const Dashboard: React.FC = () => {
                     }}
                     xAxis={{
                       label: { 
-                        style: { fill: theme === "dark" ? "#f7fafc" : "#222", fontSize: 11 },
+                        style: { fill: theme === "dark" ? "#ffffff" : "#222", fontSize: 12, fontWeight: 500 },
                         rotate: -30
                       },
-                      line: { style: { stroke: theme === "dark" ? "#434343" : "#e8e8e8" } },
+                      line: { style: { stroke: theme === "dark" ? "#595959" : "#e8e8e8" } },
                     }}
                     yAxis={{
                       label: { 
-                        style: { fill: theme === "dark" ? "#f7fafc" : "#666", fontSize: 11 },
+                        style: { fill: theme === "dark" ? "#ffffff" : "#666", fontSize: 12, fontWeight: 500 },
                         formatter: (value) => `$${(value / 1000).toFixed(0)}K`
                       },
                       grid: { 
                         line: { 
                           style: { 
-                            stroke: theme === "dark" ? "#303030" : "#f0f0f0", 
+                            stroke: theme === "dark" ? "#434343" : "#f0f0f0", 
                             lineDash: [4, 4] 
                           } 
                         } 

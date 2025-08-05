@@ -24,7 +24,7 @@ import ShopPage from "./pages/Shop";
 import ProductDetail from "./pages/Shop/ProductDetail";
 import CheckoutPreview from "./pages/Checkout/Preview";
 import CheckoutProcess from "./pages/Checkout/Process";
-import PaymentNotification from "./pages/PaymentNotification";
+import PaymentNotification from "./pages/Notifications/PaymentNotification";
 import NotificationsPage from "./pages/Notifications";
 import ReportPage from "./pages/Report";
 import CategoryManagerPage from "./pages/Product/CategoryManager";
