@@ -31,11 +31,11 @@ const NotificationDropdown: React.FC<Props> = ({
 }) => {
   const [tabKey, setTabKey] = useState("all");
 
-  // 依類型篩選
+  // 依類型篩選並限制顯示前5筆
   const filtered =
     tabKey === "all"
-      ? notifications
-      : notifications.filter((n) => n.type === tabKey);
+      ? notifications.slice(0, 5)
+      : notifications.filter((n) => n.type === tabKey).slice(0, 5);
 
   return (
     <Card
@@ -64,6 +64,7 @@ const NotificationDropdown: React.FC<Props> = ({
       <List
         dataSource={filtered}
         locale={{ emptyText: "暫無通知" }}
+        size="small"
         renderItem={(item) => (
           <List.Item
             className={item.is_read ? "" : "unread"}
@@ -103,8 +104,15 @@ const NotificationDropdown: React.FC<Props> = ({
           </List.Item>
         )}
       />
-      <div style={{ textAlign: "center", padding: "8px 0" }}>
-        <a onClick={onViewAll}>查看全部通知</a>
+      <div style={{ 
+        textAlign: "center", 
+        padding: "8px 0", 
+        borderTop: theme === "dark" ? "1px solid #31343f" : "1px solid #f0f0f0",
+        fontSize: "13px"
+      }}>
+        <a onClick={onViewAll} style={{ color: theme === "dark" ? "#13c2c2" : "#1890ff" }}>
+          查看全部通知 ({notifications.length})
+        </a>
       </div>
     </Card>
   );

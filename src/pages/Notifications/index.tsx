@@ -1,18 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { Card, List, message, Spin, Typography, Tag } from "antd";
+import { Card, List, message, Spin, Typography, Tag, Tabs } from "antd";
 import type { Notification } from "../../types/Notification";
 import {
   fetchNotifications,
   markNotificationRead
 } from "../../api/notifications";
 
-
 const { Text } = Typography;
+
+// 通知分類標籤（與下拉預覽相同）
+const notificationTabs = [
+  { key: "all", label: "全部" },
+  { key: "order", label: "訂單" },
+  { key: "system", label: "系統" },
+  { key: "customer", label: "客服" },
+];
 
 const NotificationPage: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [readLoadingId, setReadLoadingId] = useState<number | null>(null); // 避免重複點擊
+  const [activeTab, setActiveTab] = useState<string>("all"); // 當前分頁
 
   const loadNotifications = async () => {
     setLoading(true);
@@ -144,18 +152,33 @@ const NotificationPage: React.FC = () => {
     }
   };
 
+  // 根據當前分頁篩選通知
+  const getFilteredNotifications = () => {
+    if (activeTab === "all") {
+      return notifications;
+    }
+    return notifications.filter((notification) => notification.type === activeTab);
+  };
+
   useEffect(() => {
     loadNotifications();
   }, []);
 
   return (
-    <Card title="所有通知">
+    <Card 
+      title="所有通知"
+      tabList={notificationTabs}
+      activeTabKey={activeTab}
+      onTabChange={setActiveTab}
+    >
       <Spin spinning={loading}>
-        {notifications.length === 0 ? (
-          <div style={{ textAlign: "center", padding: 20 }}>目前沒有通知</div>
+        {getFilteredNotifications().length === 0 ? (
+          <div style={{ textAlign: "center", padding: 20 }}>
+            {activeTab === "all" ? "目前沒有通知" : `目前沒有${notificationTabs.find(tab => tab.key === activeTab)?.label}通知`}
+          </div>
         ) : (
           <List
-            dataSource={notifications}
+            dataSource={getFilteredNotifications()}
             renderItem={(item) => (
               <List.Item
                 style={{ background: item.is_read ? "#fff" : "#e6f7ff", cursor: "pointer" }}
@@ -167,6 +190,13 @@ const NotificationPage: React.FC = () => {
                       <Text strong>{item.title}</Text>{" "}
                       <Tag color={item.is_read ? "default" : "blue"}>
                         {item.is_read ? "已讀" : "未讀"}
+                      </Tag>
+                      <Tag color={
+                        item.type === "order" ? "green" :
+                        item.type === "system" ? "orange" :
+                        item.type === "customer" ? "purple" : "default"
+                      }>
+                        {notificationTabs.find(tab => tab.key === item.type)?.label || item.type}
                       </Tag>
                     </>
                   }

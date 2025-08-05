@@ -1,18 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Button,
-  InputNumber,
-  message,
-  Card,
-  Form,
-  Input,
-  Modal,
-} from "antd";
-import { createOrder } from "../../api/orders";
+import { Table, Button, InputNumber, message, Card, Typography, Space, Divider, Empty } from "antd";
 import { useNavigate } from "react-router-dom";
 import { getProducts } from "../../api/products";
 import { getCurrentUser } from "../../utils/auth";
+import { ShoppingCartOutlined, DeleteOutlined } from "@ant-design/icons";
+
+const { Title, Text } = Typography;
 
 interface CartItem {
   id: number;
@@ -26,9 +19,6 @@ interface CartItem {
 const CartPage: React.FC = () => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [allProducts, setAllProducts] = useState<any[]>([]);
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [form] = Form.useForm();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,19 +85,29 @@ const CartPage: React.FC = () => {
       title: "商品",
       dataIndex: "name",
       render: (_: any, record: CartItem) => (
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {record.image_url && (
-            <img
-              src={record.image_url}
-              style={{ width: 40 }}
-              alt={record.name}
+            <img 
+              src={record.image_url} 
+              style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 4 }} 
+              alt={record.name} 
             />
           )}
-          <span>{record.name}</span>
+          <div>
+            <Text strong>{record.name}</Text>
+            <br />
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              庫存: {record.stock}
+            </Text>
+          </div>
         </div>
       ),
     },
-    { title: "單價", dataIndex: "price", render: (v: number) => `$${v}` },
+    { 
+      title: "單價", 
+      dataIndex: "price", 
+      render: (v: number) => <Text>${v.toLocaleString()}</Text> 
+    },
     {
       title: "數量",
       dataIndex: "qty",
@@ -117,17 +117,25 @@ const CartPage: React.FC = () => {
           max={record.stock}
           value={qty}
           onChange={(v) => updateQty(record.id, v)}
+          style={{ width: 80 }}
         />
       ),
     },
     {
       title: "小計",
-      render: (_: any, record: CartItem) => `$${record.price * record.qty}`,
+      render: (_: any, record: CartItem) => (
+        <Text strong>${(record.price * record.qty).toLocaleString()}</Text>
+      ),
     },
     {
       title: "操作",
       render: (_: any, record: CartItem) => (
-        <Button type="link" onClick={() => removeItem(record.id)}>
+        <Button 
+          type="link" 
+          danger 
+          icon={<DeleteOutlined />}
+          onClick={() => removeItem(record.id)}
+        >
           移除
         </Button>
       ),
@@ -137,108 +145,101 @@ const CartPage: React.FC = () => {
   const handleCheckout = () => {
     const user = getCurrentUser();
     if (!user || user.role === "guest") {
-      message.info("訪客模式無法結帳，將跳轉到註冊帳號頁面");
-      setTimeout(() => {
-        localStorage.setItem("oms-auto-checkout", "1");
-        navigate("/register");
-      }, 1000);
+      message.info("請先登入後再進行結帳");
+      navigate("/login");
       return;
     }
-    setCheckoutOpen(true);
-  };
-
-  const onFinish = async (values: any) => {
-    setLoading(true);
-    try {
-      const order = await createOrder({
-        receiver_name: values.receiver_name,
-        receiver_phone: values.receiver_phone,
-        shipping_address: values.shipping_address,
-        remark: values.remark,
-        items: cart.map((item) => ({ product_id: item.id, qty: item.qty })),
-      });
-      message.success("訂單建立成功！即將跳轉到訂單頁面...");
-      setCart([]);
-      localStorage.removeItem("oms-cart");
-      setCheckoutOpen(false);
-      form.resetFields();
-
-      setTimeout(() => {
-        const user = getCurrentUser();
-        if (!user || user.role === "guest") {
-          // 訪客下單後跳轉到註冊頁面
-          navigate("/register", {
-            state: {
-              message: "下單成功！請註冊帳號以查看訂單詳情",
-              fromOrder: true,
-            },
-          });
-        } else {
-          // 已登入用戶（賣家/管理員）跳轉到訂單頁面
-          navigate("/orders");
-        }
-      }, 1500);
-    } catch (e: any) {
-      message.error(e.message || "下單失敗");
-    } finally {
-      setLoading(false);
+    
+    if (cart.length === 0) {
+      message.warning("購物車為空，請先加入商品");
+      return;
     }
+    
+    // 儲存結帳商品到 localStorage，然後導向結帳預覽頁面
+    localStorage.setItem('checkout-items', JSON.stringify(cart));
+    navigate('/checkout/preview', {
+      state: {
+        items: cart
+      }
+    });
   };
+
+  const clearCart = () => {
+    setCart([]);
+    localStorage.removeItem("oms-cart");
+    message.success("購物車已清空");
+  };
+
+  if (cart.length === 0) {
+    return (
+      <Card>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={
+            <Space direction="vertical">
+              <Text type="secondary">您的購物車是空的</Text>
+              <Button type="primary" onClick={() => navigate('/shop')}>
+                前往購物
+              </Button>
+            </Space>
+          }
+        />
+      </Card>
+    );
+  }
 
   return (
-    <Card title="購物車">
-      <Table
-        dataSource={cart}
-        columns={columns}
-        rowKey="id"
-        pagination={false}
-      />
-      <div style={{ marginTop: 16, textAlign: "right" }}>
-        <b>總金額：${total}</b>
-        <Button
-          type="primary"
-          onClick={handleCheckout}
-          disabled={cart.length === 0}
-          style={{ marginLeft: 16 }}
-        >
-          前往結帳
-        </Button>
-      </div>
-      <Modal
-        open={checkoutOpen}
-        onCancel={() => setCheckoutOpen(false)}
-        onOk={() => form.submit()}
-        title="填寫收件資訊"
-        confirmLoading={loading}
-      >
-        <Form form={form} onFinish={onFinish} layout="vertical">
-          <Form.Item
-            label="收件人"
-            name="receiver_name"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="電話"
-            name="receiver_phone"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="地址"
-            name="shipping_address"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item label="備註" name="remark">
-            <Input.TextArea />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </Card>
+    <div>
+      <Title level={2}>
+        <ShoppingCartOutlined /> 購物車
+      </Title>
+      <Text type="secondary">共 {cart.length} 項商品</Text>
+      
+      <Card style={{ marginTop: 16 }}>
+        <Table
+          dataSource={cart}
+          columns={columns}
+          rowKey="id"
+          pagination={false}
+          summary={() => (
+            <Table.Summary>
+              <Table.Summary.Row>
+                <Table.Summary.Cell index={0} colSpan={3}>
+                  <Text strong>總計</Text>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={3}>
+                  <Text strong style={{ fontSize: 16, color: '#ff4d4f' }}>
+                    ${total.toLocaleString()}
+                  </Text>
+                </Table.Summary.Cell>
+                <Table.Summary.Cell index={4} />
+              </Table.Summary.Row>
+            </Table.Summary>
+          )}
+        />
+        
+        <Divider />
+        
+        <div style={{ textAlign: 'right' }}>
+          <Space>
+            <Button 
+              onClick={clearCart}
+              disabled={cart.length === 0}
+            >
+              清空購物車
+            </Button>
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleCheckout}
+              disabled={cart.length === 0}
+            >
+              前往結帳 (${total.toLocaleString()})
+            </Button>
+          </Space>
+        </div>
+      </Card>
+    </div>
   );
 };
 

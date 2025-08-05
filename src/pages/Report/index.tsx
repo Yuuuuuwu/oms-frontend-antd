@@ -95,7 +95,7 @@ const ReportPage: React.FC = () => {
             { title: "銷售金額", dataIndex: "total_amount" },
           ]}
           dataSource={productRank}
-          rowKey="product_id"
+          rowKey="product_name"
           loading={loading}
           pagination={false}
         />

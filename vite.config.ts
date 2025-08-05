@@ -9,5 +9,10 @@ export default defineConfig(({ mode }) => {
     server: {
       historyApiFallback: true, // 這行非常重要，SPA 頁面打網址列會 fallback 給 index.html
     },
+    test: {
+      environment: 'jsdom',
+      globals: true,
+      setupFiles: ['./src/test/setup.ts'],
+    },
   };
 });
