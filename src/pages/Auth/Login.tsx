@@ -12,7 +12,7 @@ const Login: React.FC = () => {
     const success = await login(values.email, values.password);
     if (success) {
       messageApi.success("登入成功！");
-      navigate("/dashboard");
+      navigate("/shop");
     } else {
       messageApi.error("信箱或密碼錯誤！");
     }

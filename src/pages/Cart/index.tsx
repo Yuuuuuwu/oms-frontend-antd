@@ -33,7 +33,7 @@ const CartPage: React.FC = () => {
       } catch {}
 
       const cartFull: CartItem[] = cartArr
-        .map(item => {
+        .map((item) => {
           const prod = productsRes.data.find((p: any) => p.id === item.id);
           if (!prod) return undefined;
           return {
@@ -42,7 +42,7 @@ const CartPage: React.FC = () => {
             price: prod.price,
             qty: item.qty,
             stock: prod.stock,
-            image_url: prod.image_url
+            image_url: prod.image_url,
           } as CartItem;
         })
         .filter((x): x is CartItem => !!x);
@@ -75,7 +75,10 @@ const CartPage: React.FC = () => {
     });
   };
 
-  const total = cart.reduce((sum: number, item: CartItem) => sum + item.price * item.qty, 0);
+  const total = cart.reduce(
+    (sum: number, item: CartItem) => sum + item.price * item.qty,
+    0
+  );
 
   const columns = [
     {
