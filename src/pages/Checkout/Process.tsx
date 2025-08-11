@@ -121,6 +121,9 @@ const CheckoutProcess: React.FC = () => {
         remark: formValues.remark || ''
       };
 
+      console.log('準備發送的訂單數據:', orderData);
+      console.log('checkoutData.items:', checkoutData.items);
+
       const order = await createOrder(orderData);
       
       // 如果是 ECPay，進行付款流程
@@ -152,9 +155,10 @@ const CheckoutProcess: React.FC = () => {
         localStorage.removeItem('checkout-items');
         navigate('/orders');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('訂單建立失敗:', error);
-      message.error('訂單建立失敗，請稍後再試');
+      const errorMessage = error?.response?.data?.message || error?.response?.data?.description || '訂單建立失敗，請稍後再試';
+      message.error(errorMessage);
     } finally {
       setLoading(false);
     }

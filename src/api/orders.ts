@@ -58,9 +58,15 @@ export async function createOrder(payload: {
   items: { product_id: number; qty: number }[];
 }): Promise<Order> {
   try {
-    return (await axiosWithAuth.post(API_URL, payload)).data;
-  } catch (e) {
+    console.log("正在發送訂單請求:", payload);
+    const response = await axiosWithAuth.post(API_URL, payload);
+    console.log("訂單建立成功:", response.data);
+    return response.data;
+  } catch (e: any) {
     console.error("新增訂單失敗", e);
+    console.error("錯誤響應:", e.response?.data);
+    console.error("錯誤狀態:", e.response?.status);
+    console.error("錯誤標頭:", e.response?.headers);
     throw e;
   }
 }
