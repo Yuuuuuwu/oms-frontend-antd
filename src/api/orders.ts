@@ -50,7 +50,13 @@ export async function getOrderBySn(orderSn: string): Promise<Order> {
 }
 
 // 新增訂單
-export async function createOrder(payload: Order): Promise<Order> {
+export async function createOrder(payload: {
+  receiver_name: string;
+  receiver_phone: string;
+  shipping_address: string;
+  remark?: string;
+  items: { product_id: number; qty: number }[];
+}): Promise<Order> {
   try {
     return (await axiosWithAuth.post(API_URL, payload)).data;
   } catch (e) {
