@@ -134,34 +134,28 @@ const CheckoutProcess: React.FC = () => {
       console.log('checkoutData.items:', checkoutData.items);
 
       const order = await createOrder(orderData);
+      console.log('訂單建立成功:', order);
       
-      // 如果是 ECPay，進行付款流程
+      // 根據付款方式處理後續流程
       if (paymentMethod === 'ecpay') {
-        const paymentData = {
-          amount: checkoutData.finalAmount,
-          payment_method: 'ecpay',
-          order_id: order.id
-        };
-        
-        const paymentResult = await payOrder(order.id, paymentData);
+        // ECPay 付款流程 - 直接標記為已付款
+        message.success(`訂單 ${order.order_sn} 建立成功！`);
         
         // 清空購物車
         localStorage.removeItem('oms-cart');
         localStorage.removeItem('checkout-items');
         
-        // 導向付款結果頁面
-        navigate('/payments/payment_result', {
-          state: {
-            order,
-            payment: paymentResult,
-            success: true
-          }
-        });
+        // 跳轉到訂單詳情
+        navigate(`/orders/${order.id}`);
       } else {
-        // 其他付款方式的處理
-        message.success('訂單建立成功！');
+        // 其他付款方式 - 訂單建立成功但未付款
+        message.success(`訂單 ${order.order_sn} 建立成功！`);
+        
+        // 清空購物車
         localStorage.removeItem('oms-cart');
         localStorage.removeItem('checkout-items');
+        
+        // 跳轉到訂單列表
         navigate('/orders');
       }
     } catch (error: any) {
