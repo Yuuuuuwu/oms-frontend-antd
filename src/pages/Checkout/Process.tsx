@@ -108,19 +108,26 @@ const CheckoutProcess: React.FC = () => {
     
     setLoading(true);
     try {
-      // 先驗證並獲取所有表單數據
-      const formValues = await form.validateFields();
-      console.log('表單驗證通過，獲取的數據:', formValues);
+      // 獲取所有表單數據（不限於當前步驟）
+      const allFormValues = form.getFieldsValue(true);
+      console.log('獲取所有表單數據:', allFormValues);
+      
+      // 驗證必要字段
+      if (!allFormValues.receiver_name || !allFormValues.receiver_phone || !allFormValues.shipping_address) {
+        message.error('請返回第一步填寫完整的收件資訊');
+        setCurrentStep(0);
+        return;
+      }
       
       const orderData = {
         items: checkoutData.items.map(item => ({
           product_id: item.id,
           qty: item.qty
         })),
-        receiver_name: formValues.receiver_name,
-        receiver_phone: formValues.receiver_phone,
-        shipping_address: formValues.shipping_address,
-        remark: formValues.remark || ''
+        receiver_name: allFormValues.receiver_name,
+        receiver_phone: allFormValues.receiver_phone,
+        shipping_address: allFormValues.shipping_address,
+        remark: allFormValues.remark || ''
       };
 
       console.log('準備發送的訂單數據:', orderData);
