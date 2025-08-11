@@ -108,8 +108,10 @@ const CheckoutProcess: React.FC = () => {
     
     setLoading(true);
     try {
-      // 先建立訂單
-      const formValues = form.getFieldsValue();
+      // 先驗證並獲取所有表單數據
+      const formValues = await form.validateFields();
+      console.log('表單驗證通過，獲取的數據:', formValues);
+      
       const orderData = {
         items: checkoutData.items.map(item => ({
           product_id: item.id,
