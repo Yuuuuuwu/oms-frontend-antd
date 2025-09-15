@@ -7,14 +7,15 @@
 
 現代化的訂單管理系統前端，基於 React + TypeScript + Ant Design，支援多角色、儀表板、商品/訂單/支付/客戶/通知/購物等完整功能，並具備完善分層、測試與容器化部署。
 
+---
 
-### 目前此前端已部署到Render雲端平台，可透過下方測試帳號進行測試。
+### 目前此前端已部署到 Render 雲端平台，可透過下方測試帳號進行測試。
 
-此為免費方案部署，伺服器會有閒置模式，初次開啟需要等伺服器啟動，若有loading情況請耐心等候，謝謝。
+此為免費方案部署，伺服器會有閒置模式，初次開啟需要等伺服器啟動，若有 loading 情況請耐心等候，謝謝。
 
 後端網址:https://oms-backend-d0yc.onrender.com
 
-請先開啟後端網址，待後端啟動後顯示Hello, Order Management System，即可開啟下方前端網頁進行測試。
+請先開啟後端網址，待後端啟動後顯示 Hello, Order Management System，即可開啟下方前端網頁進行測試。
 
 前端網址:https://oms-frontend-ixkl.onrender.com
 
@@ -37,6 +38,7 @@ Password: CustomerPassword123!
 ---
 
 ## 📋 目錄
+
 - [功能特色](#功能特色)
 - [技術架構](#技術架構)
 - [快速開始](#快速開始)
@@ -47,32 +49,41 @@ Password: CustomerPassword123!
 ## ✨ 功能特色
 
 ### 🔐 身份驗證
+
 - JWT 登入/登出、自動刷新
 - 多角色權限（admin/seller/customer）
 - 忘記/重設密碼
 
 ### 📊 儀表板
+
 - 銷售統計、訂單狀態、圖表、即時監控
 
 ### 👥 用戶管理
+
 - 用戶 CRUD、角色分配、狀態控管
 
 ### 📦 商品與分類管理
+
 - 商品 CRUD、分類巢狀、庫存、促銷、圖片
 
 ### 🛒 訂單管理
+
 - 訂單 CRUD、狀態流轉、明細、批次操作
 
 ### 💳 支付管理
+
 - 支付紀錄、狀態追蹤、退款、ECPay 整合
 
 ### 👤 客戶管理
+
 - 客戶 CRUD、標籤、訂單、忠誠度
 
 ### 🔔 通知系統
+
 - 即時推播、歷史、狀態管理
 
 ### 🛍️ 購物功能
+
 - 商品瀏覽、購物車、結帳、訂單追蹤
 
 ---
@@ -130,7 +141,7 @@ oms-frontend-antd/
 ---
 
 ## 🧪 測試與部署
+
 - `npm run test`：單元/組件測試（Vitest + Testing Library）
 - `docker build .`：容器化建置
 - 支援 Nginx/Render/雲端靜態部署
-
